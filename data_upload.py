@@ -2,6 +2,7 @@ import dlt
 import requests
 import io
 import pandas as pd
+from datetime import datetime
 
 url = "https://opendata.caissedesdepots.fr/api/explore/v2.1/catalog/datasets/moncompteformation_catalogueformation/exports/csv"
 
@@ -30,10 +31,18 @@ pipeline = dlt.pipeline(
     dataset_name="courses_data"  # Top-level folder name
 )
 
+# Get current date in YYYY-MM-DD format
+current_date = datetime.now().strftime("%Y-%m-%d")
+
+# Create the desired filename with the date
+filename = f"course_data_{current_date}.parquet"
+
 # Run the pipeline with the new resource, specify table name and destination path
 load_info = pipeline.run(
     fetch_courses_pipeline(),
     write_disposition="replace",
-    table_name="courses_france"
+    table_name="courses_raw_parquet"
+    naming=filename,
+    format="parquet"
 )
 print(load_info)
