@@ -14,7 +14,7 @@ services:
       retries: 10
 
   kestra:
-    image: localhost/kestra-dlt:latest
+    image: kestra/kestra:latest
     container_name: kestra    
     pull_policy: always
     # Note that this setup with a root user is intended for development purpose.
