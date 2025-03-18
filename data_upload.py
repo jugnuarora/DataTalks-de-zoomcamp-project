@@ -24,25 +24,23 @@ def fetch_courses_pipeline():
     except Exception as e:
         print(f"Failed to fetch data from {url}: {e}")
 
-# Define new dlt pipeline
-pipeline = dlt.pipeline(
-    pipeline_name="moncompteformation_pipeline",
-    destination="filesystem",
-    dataset_name="courses_data"  # Top-level folder name
-)
 
 # Get current date in YYYY-MM-DD format
 current_date = datetime.now().strftime("%Y-%m-%d")
 
-# Create the desired filename with the date
-filename = f"course_data_{current_date}.parquet"
+# Define new dlt pipeline
+pipeline = dlt.pipeline(
+    pipeline_name="moncompteformation_pipeline",
+    destination="filesystem",
+    dataset_name="courses_data",  # Top-level folder name
+    full_refresh=True, # optional but recommended for file based destinations.
+    destination_config={"file_naming": f"course_data_{current_date}.parquet"}
+)
 
 # Run the pipeline with the new resource, specify table name and destination path
 load_info = pipeline.run(
     fetch_courses_pipeline(),
     write_disposition="replace",
-    table_name="courses_raw_parquet",
-    naming=filename,
-    format="parquet"
+    table_name="courses_raw_parquet"
 )
 print(load_info)
