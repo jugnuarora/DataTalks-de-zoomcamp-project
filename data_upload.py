@@ -41,7 +41,7 @@ filename = f"course_data_{current_date}.parquet"
 load_info = pipeline.run(
     fetch_courses_pipeline(),
     write_disposition="replace",
-    table_name="courses_raw_parquet"
+    table_name="courses_raw_parquet",
     naming=filename,
     format="parquet"
 )
