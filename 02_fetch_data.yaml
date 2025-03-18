@@ -1,0 +1,31 @@
+id: fetch-data-api
+namespace: france-courses-enrollments
+tasks:
+  - id: fetch-courses-api
+    type: io.kestra.plugin.core.http.Request
+    url: "https://opendata.caissedesdepots.fr/api/explore/v2.1/catalog/datasets/moncompteformation_catalogueformation/exports/csv"
+    method: GET
+    queryParameters:
+      refine: 
+        - "libelle_nsf_1:Informatique, traitement de l'information, réseaux de transmission"
+        - "libelle_nsf_1:Enseignement, formation"
+        - "libelle_nsf_1:Commerce, vente"
+        - "libelle_nsf_1:Comptabilite, gestion"
+        - "libelle_nsf_1:Spécialités pluri-scientifiques"
+        - "libelle_nsf_1:Spécialites plurivalentes de la communication et de l'information"
+    headers:
+      Content-Type: application/json
+
+  - id: save-courses-to-gcs
+    type: io.kestra.plugin.gcs.GcsPut
+    bucket: "your-bucket-name"
+    path: "raw/french_courses_fr_{{ now().format('yyyy-MM-dd') }}.csv"
+    body: "{{ tasks['fetch-courses-api'].output }}"
+
+pluginDefaults:
+  - type: io.kestra.plugin.gcp
+    values:
+      serviceAccount: "{{ kv('GCP_CREDS') }}"
+      projectId: "{{ kv('GCP_PROJECT_ID') }}"
+      location: "{{ kv('GCP_LOCATION') }}"
+      bucket: "{{ kv('GCP_BUCKET_NAME') }}"
