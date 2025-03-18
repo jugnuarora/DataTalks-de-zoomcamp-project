@@ -15,7 +15,7 @@ def fetch_courses_pipeline():
             for chunk in response.iter_content(chunk_size=1024 * 1024):
                 buffer.write(chunk)
             buffer.seek(0)
-            table = pd.read_csv(buffer, sep=";", low_memory=False)
+            table = pd.read_csv(buffer, sep=";")
             print(f'Got data from {url} with {len(table)} records')
             if len(table) > 0:
                 table['code_region'] = table['code_region'].astype(str)
@@ -23,10 +23,6 @@ def fetch_courses_pipeline():
                 yield table
     except Exception as e:
         print(f"Failed to fetch data from {url}: {e}")
-
-
-# Get current date in YYYY-MM-DD format
-current_date = datetime.now().strftime("%Y-%m-%d")
 
 # Define new dlt pipeline
 pipeline = dlt.pipeline(
