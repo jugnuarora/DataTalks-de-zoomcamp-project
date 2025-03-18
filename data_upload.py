@@ -34,7 +34,7 @@ pipeline = dlt.pipeline(
     destination="filesystem",
     dataset_name="courses_data",  # Top-level folder name
     full_refresh=True, # optional but recommended for file based destinations.
-    destination_kwargs={"file_naming": f"course_data_{current_date}.parquet"}
+    settings={"destination": {"file_naming": f"course_data_{current_date}.parquet"}}
 )
 
 # Run the pipeline with the new resource, specify table name and destination path
