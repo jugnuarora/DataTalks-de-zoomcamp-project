@@ -14,7 +14,7 @@ def fetch_courses_pipeline():
             for chunk in response.iter_content(chunk_size=1024 * 1024):
                 buffer.write(chunk)
             buffer.seek(0)
-            table = pd.read_csv(buffer, sep=";")
+            table = pd.read_csv(buffer, sep=";", low_memory=False)
             print(f'Got data from {url} with {len(table)} records')
             if len(table) > 0:
                 table['code_region'] = table['code_region'].astype(str)
