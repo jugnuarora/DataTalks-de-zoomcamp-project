@@ -28,7 +28,7 @@ spark = SparkSession.builder \
     .config(conf=sc.getConf()) \
     .getOrCreate()
 
-df_courses = spark.read.parquet('gs://jugnu-france-course-enrollments/courses_data/courses_raw_parquet/1742298455.7402864.23a1a4c6d1.parquet')
+df_courses = spark.read.parquet('gs://jugnu-france-course-enrollments/courses_data/courses_raw_parquet/*.parquet')
 
 filter_values = [
     "Informatique, traitement de l'information, réseaux de transmission",
@@ -74,3 +74,5 @@ for old_name, new_name in columns_to_rename.items():
         print(f"Column '{old_name}' not found, skipping rename.")
 
 df_courses.coalesce(1).write.parquet('gs://jugnu-france-course-enrollments/courses_data/courses_raw_parquet/france_courses_en.parquet', mode='overwrite')
+
+spark.stop()

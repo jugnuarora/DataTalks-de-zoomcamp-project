@@ -14,10 +14,12 @@ __Step 4:__ Create a cloud storage bucket `jugnu-france-course-enrollments`. Sel
 
 # Kestra Set-up
 
+__Step 1:__ Add secrets.toml 
 __Step 1:__ Create `docker-compose.yml` file for running kestra. Run `docker compose up`. Access Kestra on `localhost:8080`
 
 __Step 2:__ Execute `01_gcp_kv.yaml` to set up the key value pair. Later on you can modify them with the values that corresponds to your set-up by going to namespaces, selecting `open-payments-cms` and then selecting `KV Store`.
 
+__Step 3:__ Add 
 # Data Retrieval using API
 
 
