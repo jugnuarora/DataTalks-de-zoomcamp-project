@@ -1,33 +1,14 @@
 import pyspark
 from pyspark.sql import SparkSession
-from pyspark.conf import SparkConf
-from pyspark.context import SparkContext
 from pyspark.sql.functions import col
 from pyspark.sql import functions as F
 
-credentials_location = './gcs.json'
-
-conf = SparkConf() \
-    .setMaster('local[*]') \
-    .setAppName('test') \
-    .set("spark.jars", "./lib/gcs-connector-hadoop3-2.2.5.jar") \
-    .set("spark.hadoop.google.cloud.auth.service.account.enable", "true") \
-    .set("spark.hadoop.google.cloud.auth.service.account.json.keyfile", credentials_location) \
-    .set("spark.driver.extraClassPath", "./lib/gcs-connector-hadoop3-2.2.5.jar") \
-    .set("spark.executor.extraClassPath", "./lib/gcs-connector-hadoop3-2.2.5.jar")
-
-sc = SparkContext(conf=conf)
-
-hadoop_conf = sc._jsc.hadoopConfiguration()
-
-hadoop_conf.set("fs.AbstractFileSystem.gs.impl",  "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFS")
-hadoop_conf.set("fs.gs.impl", "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem")
-hadoop_conf.set("fs.gs.auth.service.account.json.keyfile", credentials_location)
-hadoop_conf.set("fs.gs.auth.service.account.enable", "true")
+#credentials_location = './gcs.json'
 
 spark = SparkSession.builder \
-    .config(conf=sc.getConf()) \
-    .getOrCreate()
+        .master("local[*]") \
+        .appName('courses') \
+        .getOrCreate()
 
 df_courses = spark.read.option("header", "true").parquet('gs://jugnu-france-course-enrollments/courses_data/courses_raw_parquet/*.parquet')
 
