@@ -32,9 +32,9 @@ spark = SparkSession.builder \
 
 # Generate the dynamic table name
 today_date = datetime.now().strftime("%Y-%m-%d")
-dataset_name = f"gs://jugnu-france-course-enrollments/courses_enrol_data{today_date}/courses_raw_parquet/*.parquet"
+dataset_name_read = f"gs://jugnu-france-course-enrollments/courses_enrol_data{today_date}/courses_raw_parquet/*.parquet"
 
-df_courses = spark.read.option("header", "true").parquet(dataset_name)
+df_courses = spark.read.option("header", "true").parquet(dataset_name_read)
 
 df_courses_date = df_courses.withColumn('date_extract', F.to_date(F.col('date_extract'), 'yyyy-MM-dd'))
 
@@ -81,6 +81,8 @@ for old_name, new_name in columns_to_rename.items():
     else:
         print(f"Column '{old_name}' not found, skipping rename.")
 
-df_courses_filtered.coalesce(1).write.parquet('gs://jugnu-france-course-enrollments/courses_data/courses_raw_parquet/france_courses_en.parquet', mode='overwrite')
+dataset_name_write = f"gs://jugnu-france-course-enrollments/courses_enrol_data{today_date}/courses_filtered.parquet"
+
+df_courses_filtered.coalesce(1).write.parquet(dataset_name_write, mode='overwrite')
 
 spark.stop()
