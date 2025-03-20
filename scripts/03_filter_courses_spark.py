@@ -81,7 +81,7 @@ for old_name, new_name in columns_to_rename.items():
     else:
         print(f"Column '{old_name}' not found, skipping rename.")
 
-dataset_name_write = f"gs://jugnu-france-course-enrollments/courses_enrol_data{today_date}/courses_filtered.parquet"
+dataset_name_write = f"gs://jugnu-france-course-enrollments/courses_enrol_data_{today_date}/courses_filtered.parquet"
 
 df_courses_filtered.coalesce(1).write.parquet(dataset_name_write, mode='overwrite')
 
