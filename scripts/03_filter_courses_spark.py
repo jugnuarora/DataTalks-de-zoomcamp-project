@@ -4,7 +4,6 @@ from pyspark.conf import SparkConf
 from pyspark.context import SparkContext
 from pyspark.sql.functions import col
 from pyspark.sql import functions as F
-from datetime import datetime
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -40,10 +39,6 @@ hadoop_conf.set("fs.gs.auth.service.account.enable", "true")
 spark = SparkSession.builder \
     .config(conf=sc.getConf()) \
     .getOrCreate()
-
-# Generate the dynamic table name
-today_date = datetime.now().strftime("%Y-%m-%d")
-dataset_name_read = f"gs://jugnu-france-course-enrollments/courses_enrol_data_{today_date}/courses_raw_parquet/*.parquet"
 
 df_courses = spark.read.option("header", "true").parquet(input_file)
 
@@ -91,8 +86,6 @@ for old_name, new_name in columns_to_rename.items():
         df_courses_filtered = df_courses_filtered.withColumnRenamed(old_name, new_name)
     else:
         print(f"Column '{old_name}' not found, skipping rename.")
-
-dataset_name_write = f"gs://jugnu-france-course-enrollments/courses_enrol_data_{today_date}/courses_filtered.parquet"
 
 df_courses_filtered.coalesce(1).write.parquet(output_file, mode='overwrite')
 

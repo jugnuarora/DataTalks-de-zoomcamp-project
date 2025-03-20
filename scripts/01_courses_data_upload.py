@@ -4,6 +4,16 @@ import io
 import pandas as pd
 from datetime import datetime
 
+import argparse
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument('--output', required=True)
+
+args = parser.parse_args()
+
+dataset_name = args.output
+
 url = "https://opendata.caissedesdepots.fr/api/explore/v2.1/catalog/datasets/moncompteformation_catalogueformation/exports/csv"
 
 @dlt.resource(name="courses")
@@ -25,8 +35,8 @@ def fetch_courses_pipeline():
         print(f"Failed to fetch data from {url}: {e}")
 
 # Generate the dynamic table name
-today_date = datetime.now().strftime("%Y-%m-%d")
-dataset_name = f"courses_enrol_data_{today_date}"
+#today_date = datetime.now().strftime("%Y-%m-%d")
+#dataset_name = f"courses_enrol_data_{today_date}"
 
 # Define new dlt pipeline
 pipeline = dlt.pipeline(
