@@ -32,7 +32,7 @@ spark = SparkSession.builder \
 
 # Generate the dynamic table name
 today_date = datetime.now().strftime("%Y-%m-%d")
-dataset_name_read = f"gs://jugnu-france-course-enrollments/courses_enrol_data{today_date}/courses_raw_parquet/*.parquet"
+dataset_name_read = f"gs://jugnu-france-course-enrollments/courses_enrol_data_{today_date}/courses_raw_parquet/*.parquet"
 
 df_courses = spark.read.option("header", "true").parquet(dataset_name_read)
 
