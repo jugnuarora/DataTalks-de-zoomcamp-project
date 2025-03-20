@@ -54,7 +54,7 @@ df_courses = df_courses.withColumn("code_inventaire", df_courses["code_inventair
     .withColumn("code_nsf_2", df_courses["code_nsf_2"].cast(types.StringType()))\
     .withColumn("code_nsf_3", df_courses["code_nsf_3"].cast(types.StringType()))\
     .withColumn("code_certifinfo", df_courses["code_certifinfo"].cast(types.StringType()))\
-    .withColumn("provider_ID", df_courses["provider_ID"].cast(types.StringType()))
+    .withColumn("siret", df_courses["siret"].cast(types.StringType()))
 
 df_courses_date = df_courses.withColumn('date_extract', F.to_date(F.col('date_extract'), 'yyyy-MM-dd'))
 

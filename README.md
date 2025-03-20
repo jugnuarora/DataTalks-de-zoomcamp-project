@@ -27,7 +27,13 @@ __Step 6:__ In terminal (kestra bash) `pip freeze > requirements.txt`
 __Step 7:__ In terminal `docker cp kestra:/tmp/requirements.txt ./requirements.txt`
 __END__
 
-__Step 2:__ Execute `01_gcp_kv.yaml` to set up the key value pair. Later on you can modify them with the values that corresponds to your set-up by going to namespaces, selecting `open-payments-cms` and then selecting `KV Store`.
+__Step 2:__ Execute `01_gcp_kv.yaml` to set up the key value pair. Later on you can modify them with the values that corresponds to your set-up by going to namespaces, selecting `france-courses-enrollments` and then selecting `KV Store`. You will need following key value pairs:
+    . GCP_CREDS - It has the same content as the json file generated from google cloud.
+    . GCP_DATASET - It is the same name as database in Bigquery.
+    . GCP_BUCKET_NAME - It is the same name as Bucket in Google Cloud Storage.
+    . GCP_PROJECT_ID - It is the Project Id that is automatically generated when creating the new Project on Google Cloud.
+    . GCP_LOCATION - I had chose europe-west1
+    . 
 
 __Step 3:__  
 
