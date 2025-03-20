@@ -4,6 +4,7 @@ from pyspark.conf import SparkConf
 from pyspark.context import SparkContext
 from pyspark.sql.functions import col
 from pyspark.sql import functions as F
+from datetime import datetime
 
 credentials_location = './gcs.json'
 
