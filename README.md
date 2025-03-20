@@ -14,12 +14,23 @@ __Step 4:__ Create a cloud storage bucket `jugnu-france-course-enrollments`. Sel
 
 # Kestra Set-up
 
-__Step 1:__ Add secrets.toml 
 __Step 1:__ Create `docker-compose.yml` file for running kestra. Run `docker compose up`. Access Kestra on `localhost:8080`
+
+Below steps were just to debug and create requirements.txt file
+__START__
+__Step 1:__ In terminal `docker exec -it kestra bash`
+__Step 2:__ In terminal `docker cp data_upload.py kestra:/tmp/data_upload.py`
+__Step 3:__ In terminal `docker cp .dlt/secrets.toml kestra:/tmp/.dlt/secrets.toml`
+__Step 4:__ In terminal (kestra bash) install dlt, pandas, dlt[gs], dlt[parquet]
+__Step 5:__ In terminal (kestra bash) `python data_upload.py`
+__Step 6:__ In terminal (kestra bash) `pip freeze > requirements.txt`
+__Step 7:__ In terminal `docker cp kestra:/tmp/requirements.txt ./requirements.txt`
+__END__
 
 __Step 2:__ Execute `01_gcp_kv.yaml` to set up the key value pair. Later on you can modify them with the values that corresponds to your set-up by going to namespaces, selecting `open-payments-cms` and then selecting `KV Store`.
 
-__Step 3:__ Add 
+__Step 3:__  
+
 # Data Retrieval using API
 
 

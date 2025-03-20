@@ -29,7 +29,11 @@ spark = SparkSession.builder \
     .config(conf=sc.getConf()) \
     .getOrCreate()
 
-df_courses = spark.read.option("header", "true").parquet('gs://jugnu-france-course-enrollments/courses_data/courses_raw_parquet/*.parquet')
+# Generate the dynamic table name
+today_date = datetime.now().strftime("%Y-%m-%d")
+dataset_name = f"gs://jugnu-france-course-enrollments/courses_enrol_data{today_date}/courses_raw_parquet/*.parquet"
+
+df_courses = spark.read.option("header", "true").parquet(dataset_name)
 
 df_courses_date = df_courses.withColumn('date_extract', F.to_date(F.col('date_extract'), 'yyyy-MM-dd'))
 

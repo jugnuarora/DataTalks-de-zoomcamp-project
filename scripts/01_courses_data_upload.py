@@ -24,11 +24,15 @@ def fetch_courses_pipeline():
     except Exception as e:
         print(f"Failed to fetch data from {url}: {e}")
 
+# Generate the dynamic table name
+today_date = datetime.now().strftime("%Y-%m-%d")
+dataset_name = f"courses_enrol_data_{today_date}"
+
 # Define new dlt pipeline
 pipeline = dlt.pipeline(
     pipeline_name="moncompteformation_pipeline",
     destination="filesystem",
-    dataset_name="courses_data"  # Top-level folder name
+    dataset_name=dataset_name  # Top-level folder name
 )
 
 # Run the pipeline with the new resource, specify table name and destination path
