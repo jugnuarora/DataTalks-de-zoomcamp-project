@@ -42,6 +42,19 @@ spark = SparkSession.builder \
 
 df_courses = spark.read.option("header", "true").parquet(input_file)
 
+df_courses = df_courses.withColumn("code_inventaire", df_courses["code_inventaire"].cast(types.StringType()))\
+    .withColumn("code_rncp", df_courses["code_rncp"].cast(types.StringType()))\
+    .withColumn("code_formacode_1", df_courses["code_formacode_1"].cast(types.StringType()))\
+    .withColumn("code_formacode_2", df_courses["code_formacode_2"].cast(types.StringType()))\
+    .withColumn("code_formacode_3", df_courses["code_formacode_3"].cast(types.StringType()))\
+    .withColumn("code_formacode_4", df_courses["code_formacode_4"].cast(types.StringType()))\
+    .withColumn("code_formacode_5", df_courses["code_formacode_5"].cast(types.StringType()))\
+    .withColumn("code_nsf_1", df_courses["code_nsf_1"].cast(types.StringType()))\
+    .withColumn("code_nsf_2", df_courses["code_nsf_2"].cast(types.StringType()))\
+    .withColumn("code_nsf_3", df_courses["code_nsf_3"].cast(types.StringType()))\
+    .withColumn("code_certifinfo", df_courses["code_certifinfo"].cast(types.StringType()))\
+    .withColumn("provider_ID", df_courses["provider_ID"].cast(types.StringType()))
+
 df_courses_date = df_courses.withColumn('date_extract', F.to_date(F.col('date_extract'), 'yyyy-MM-dd'))
 
 filter_values = [
