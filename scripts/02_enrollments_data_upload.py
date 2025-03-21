@@ -4,6 +4,16 @@ import io
 import pandas as pd
 from datetime import datetime
 
+import argparse
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument('--output', required=True)
+
+args = parser.parse_args()
+
+dataset_name = args.output
+
 url = "https://opendata.caissedesdepots.fr/api/explore/v2.1/catalog/datasets/entree_sortie_formation/exports/csv"
 
 @dlt.resource(name="enrollments")
@@ -26,7 +36,7 @@ def fetch_courses_pipeline():
 pipeline = dlt.pipeline(
     pipeline_name="moncompteformation_pipeline",
     destination="filesystem",
-    dataset_name="enrollments_data"  # Top-level folder name
+    dataset_name=dataset_name # Top-level folder name
 )
 
 # Run the pipeline with the new resource, specify table name and destination path
