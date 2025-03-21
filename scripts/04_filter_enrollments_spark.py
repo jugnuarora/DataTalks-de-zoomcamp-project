@@ -62,7 +62,7 @@ columns_to_rename = {
         'type_referentiel': 'type_referential',
         'code_certifinfo': 'code_certification',
         'intitule_certification': 'certification_title',
-        'siret_of_contractant': 'provider_ID',
+        'siret_of_contractant': 'provider_id',
         'raison_sociale_of_contractant': 'provider',
         'entrees_formation': 'training_entries',
         'sorties_realisation_partielle': 'partial_completion_exits',
