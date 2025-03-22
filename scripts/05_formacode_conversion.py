@@ -5,6 +5,16 @@ from pyspark.sql import functions as F
 from pyspark.sql import types as T
 from deep_translator import GoogleTranslator
 
+parser = argparse.ArgumentParser()
+
+parser.add_argument('--input', required=True)
+parser.add_argument('--output', required=True)
+
+args = parser.parse_args()
+
+input_file = args.input
+output_file = args.output
+
 credentials_location = './gcs.json'
 
 conf = SparkConf() \
@@ -31,7 +41,7 @@ spark = SparkSession.builder \
 
 df_formacode = spark.read\
                          .option("header", "true") \
-                         .csv("./data/formacode_description.csv")
+                         .csv(input_file)
 
 @F.udf(returnType=T.StringType())
 def translate(input):
@@ -39,4 +49,4 @@ def translate(input):
 
 df_formacode.withColumn('translation', translate(F.col('Description')))
 
-df_formacode.coalesce(1).write.parquet('gs://jugnu-france-course-enrollments/formacode_converted', mode='overwrite')
+df_formacode.coalesce(1).write.parquet(output_file, mode='overwrite')
