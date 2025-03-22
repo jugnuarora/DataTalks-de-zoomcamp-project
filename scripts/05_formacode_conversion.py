@@ -5,6 +5,7 @@ from pyspark.sql import functions as F
 from pyspark.sql import types as T
 from deep_translator import GoogleTranslator
 
+import argparse
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--input', required=True)
