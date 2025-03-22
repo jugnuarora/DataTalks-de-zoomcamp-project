@@ -48,7 +48,7 @@ df_formacode = spark.read\
 def translate(input):
     return GoogleTranslator(source='auto', target='en').translate(input)
 
-df_formacode = df_formacode.repartition(48)
+df_formacode = df_formacode.repartition(24)
 
 df_formacode = df_formacode.withColumn('translation', translate(F.col('Description')))
 

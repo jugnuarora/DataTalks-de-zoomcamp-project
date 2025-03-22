@@ -32,11 +32,15 @@ __Step 2:__ Execute `01_gcp_kv.yaml` to set up the key value pair. Later on you 
     . GCP_DATASET - It is the same name as database in Bigquery.
     . GCP_BUCKET_NAME - It is the same name as Bucket in Google Cloud Storage.
     . GCP_PROJECT_ID - It is the Project Id that is automatically generated when creating the new Project on Google Cloud.
-    . GCP_LOCATION - I had chose europe-west1
-    . 
+    . GCP_LOCATION - I had chosen europe-west1
+    . SECRET_PROJECT_ID - Same as GCP_PROJECT_ID but needed for dlt
+    . SECRET_CLIENT_EMAIL - Retrieve it from the json file downloaded
+    . SECRET_PRIVATE_KEY - Retrieve it from the json file downloaded
+    . SECRET_BUCKET_URL - URL for GCS `gs://....`
 
-__Step 3:__  
+# Courses Data Retrieval using dlt, spark and bigquery queries.
 
-# Data Retrieval using API
+
+
 
 
