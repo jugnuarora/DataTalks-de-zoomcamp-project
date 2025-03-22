@@ -177,5 +177,4 @@ cython_debug/
 *.csv
 *.parquet
 *.archive
-data/
 .dlt/
