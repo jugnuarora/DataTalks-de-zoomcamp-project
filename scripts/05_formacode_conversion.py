@@ -48,6 +48,8 @@ df_formacode = spark.read\
 def translate(input):
     return GoogleTranslator(source='auto', target='en').translate(input)
 
+df_formacode = df_formacode.repartition(4)
+
 df_formacode = df_formacode.withColumn('translation', translate(F.col('Description')))
 
 df_formacode.coalesce(1).write.parquet(output_file, mode='overwrite')
