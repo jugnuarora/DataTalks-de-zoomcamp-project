@@ -39,7 +39,13 @@ __Step 2:__ Execute `01_gcp_kv.yaml` to set up the key value pair. Later on you 
     . SECRET_BUCKET_URL - URL for GCS `gs://....`
 
 # Courses Data Retrieval using dlt, spark and bigquery queries.
+__Step 1:__ 
 
+__Step 2: __ Execute 02_fetch_data.yaml in kestra. It can be run with 3 inputs - `courses`, `enrollments` and `formacode`. `formacode`will generate the seed file by translating the french data into english using spark UDF. This is one time job and might be refreshed once in 6 months. But due to translation, it will take some time. Around 15 mins.
+
+__Step 3:__ Execute 02_fetch_data.yaml in kestra with input as courses. This will generate the staging file courses.
+
+__Step 4:__ 
 
 
 
