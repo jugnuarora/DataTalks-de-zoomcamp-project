@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+
+  - name: staging
+    database: france-courses-enrollments
+    schema: source_tables
+
+    tables:
+      - name: courses
+      - name: enrollments
+      - name: formacode
