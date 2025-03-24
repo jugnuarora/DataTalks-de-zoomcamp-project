@@ -4,6 +4,7 @@ from pyspark.context import SparkContext
 from pyspark.sql import functions as F
 from pyspark.sql import types as T
 from deep_translator import GoogleTranslator
+import time
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -47,7 +48,7 @@ df_formacode = spark.read\
 def translate(input_str):
     if input_str and len(input_str) > 0: # Check for empty or None
         try:
-            #time.sleep(0.3)
+            time.sleep(0.3)
             return GoogleTranslator(source='auto', target='en').translate(input_str)
         except Exception as e:
             print(f"Translation error: {e}")
@@ -59,7 +60,7 @@ def translate(input_str):
 def translate_udf(input_str): # udf, for dataframe columns.
     return translate(input_str)
 
-df_formacode = df_formacode.repartition(16, "field")
+df_formacode = df_formacode.repartition(24, "field")
 
 # 1. Collect unique values
 unique_fields = [x[0] for x in df_formacode.select("field").distinct().collect()]
