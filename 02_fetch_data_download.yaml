@@ -338,6 +338,7 @@ tasks:
         select:
           - A # First Column
           - C # Third Column
+          - G
         header: true # if first row is header, if not, set to false and add headers in the next task
         target: "{{outputDir}}/extracted_data.json" # Always JSON
 

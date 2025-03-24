@@ -48,5 +48,10 @@ __Step 3:__ Execute 02_fetch_data.yaml in kestra with input as courses. This wil
 __Step 4:__ 
 
 
+# DBT Set-up
 
+__Step 1:__ Create a new account `france-market-research`
+__Step 2:__ Create a new connection to `BigQuery`
+__Step 3:__ Create a new project and give details of the repository and the project subfolder as `dbt`. Also, create a development environment. Please note that the location of the dataset creation is europe-west1
+__Step 4:__ 
 

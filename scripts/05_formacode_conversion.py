@@ -45,11 +45,20 @@ df_formacode = spark.read\
                          .csv(input_file)
 
 @F.udf(returnType=T.StringType())
-def translate(input):
-    return GoogleTranslator(source='auto', target='en').translate(input)
+def translate(input_str):
+    if input_str and len(input_str) > 0: # Check for empty or None
+        try:
+            return GoogleTranslator(source='auto', target='en').translate(input_str)
+        except Exception as e:
+            print(f"Translation error: {e}")
+            return input_str # Return original string on error
+    else:
+        return "" # Return empty string for empty or None input
 
 df_formacode = df_formacode.repartition(24)
 
-df_formacode = df_formacode.withColumn('translation', translate(F.col('Description')))
+df_formacode = df_formacode.withColumn('description_en', translate(F.col('description'))) \
+    .withColumn("field_en", translate(F.col("field"))) \
+    .withColumn("generic_term_en", translate(F.col("generic_term")))
 
 df_formacode.coalesce(1).write.parquet(output_file, mode='overwrite')
