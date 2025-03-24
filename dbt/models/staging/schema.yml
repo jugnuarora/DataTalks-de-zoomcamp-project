@@ -10,3 +10,10 @@ sources:
       - name: courses
       - name: enrollments
       - name: formacode
+
+  - name: staging_tmp
+    database: france-courses-enrollments
+    schema: staging
+
+    tables:
+      - name: formacode
