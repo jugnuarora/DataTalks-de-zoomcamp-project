@@ -54,7 +54,10 @@ df_courses = df_courses.withColumn("code_inventaire", df_courses["code_inventair
     .withColumn("code_nsf_2", df_courses["code_nsf_2"].cast(types.StringType()))\
     .withColumn("code_nsf_3", df_courses["code_nsf_3"].cast(types.StringType()))\
     .withColumn("code_certifinfo", df_courses["code_certifinfo"].cast(types.StringType()))\
-    .withColumn("siret", df_courses["siret"].cast(types.StringType()))
+    .withColumn("siret", df_courses["siret"].cast(types.StringType()))\
+    .withColumn("frais_ttc_tot_max", df_courses["frais_ttc_tot_max"].cast(types.DecimalType(10, 2)))\
+    .withColumn("frais_ttc_tot_min", df_courses["frais_ttc_tot_min"].cast(types.DecimalType(10, 2)))\
+    .withColumn("frais_ttc_tot_mean", df_courses["frais_ttc_tot_mean"].cast(types.DecimalType(10, 2)))
 
 df_courses_date = df_courses.withColumn('date_extract', F.to_date(F.col('date_extract'), 'yyyy-MM-dd'))
 
