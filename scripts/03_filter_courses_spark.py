@@ -61,7 +61,7 @@ df_courses = df_courses.withColumn("code_inventaire", df_courses["code_inventair
 
 df_courses_date = df_courses.withColumn('date_extract', F.to_date(F.col('date_extract'), 'yyyy-MM-dd'))
 
-filter_values = [
+#filter_values = [
     "Informatique, traitement de l'information, réseaux de transmission",
     "Enseignement, formation",
     "Commerce, vente",
@@ -99,11 +99,11 @@ columns_to_rename = {
 
 # Rename the columns
 for old_name, new_name in columns_to_rename.items():
-    if old_name in df_courses_filtered.columns:
-        df_courses_filtered = df_courses_filtered.withColumnRenamed(old_name, new_name)
+    if old_name in df_courses_date.columns:
+        df_courses_date = df_courses_date.withColumnRenamed(old_name, new_name)
     else:
         print(f"Column '{old_name}' not found, skipping rename.")
 
-df_courses_filtered.coalesce(1).write.parquet(output_file, mode='overwrite')
+df_courses_date.coalesce(1).write.parquet(output_file, mode='overwrite')
 
 spark.stop()
