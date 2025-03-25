@@ -28,12 +28,24 @@ tasks:
     type: io.kestra.plugin.core.flow.If
     condition: "{{inputs.courses_or_enrollments == 'courses'}}"
     then:
+      - id: delete_gcs_folders_c
+        type: io.kestra.plugin.core.flow.ForEach
+        values:
+          - "{{render(vars.gcs_core)}}/courses_raw_parquet/"
+          - "{{render(vars.gcs_core)}}/courses_filtered/"
+        tasks:
+          - id: delete_single_folder_c
+            type: io.kestra.plugin.gcp.gcs.DeleteList
+            from: "{{ taskrun.value }}"
+
       - id: workingDirectory_c
         type: io.kestra.plugin.core.flow.WorkingDirectory
         tasks:
         - id: cloneRepository_c
           type: io.kestra.plugin.git.Clone
           url: https://github.com/jugnuarora/france_courses_enrollments.git
+          username: jugnuarora
+          password: "{{ kv('GITHUB_TOKEN') }}"
           branch: main
         
         - id: pythonScript_c
@@ -129,8 +141,8 @@ tasks:
             provider STRING OPTIONS (description = 'company providing the course. Example: AFTRAL'),
             department STRING OPTIONS (description = 'name of the department of the training location. Example: Gironde'),
             region STRING OPTIONS (description = 'name of the region of the training location. Example: New Aquitaine'),
-            type_referential STRING OPTIONS (description = '"RS" for certifications registered in the Specific Directory, "RNCP" for certifications registered in the RNCP, empty for legislative exceptions or when the certification is not active in the training catalog. Example: RS'),
-            code_rs STRING OPTIONS (description = 'Certifications listed in the RS inventory. Example: 7041'),
+            type_referentiel STRING OPTIONS (description = '"RS" for certifications registered in the Specific Directory, "RNCP" for certifications registered in the RNCP, empty for legislative exceptions or when the certification is not active in the training catalog. Example: RS'),
+            code_inventaire STRING OPTIONS (description = 'Certifications listed in the RS inventory. Example: 7041'),
             code_rncp STRING OPTIONS (description = 'National Directory of Professional Certifications Code. Example: -1 (Because it has code_rs)'),
             certification_title STRING OPTIONS (description = 'Certification Title. Example: Certificate of aptitude for safe driving (CACES) Recommendation 482 category B1: Sequential movement extraction equipment'),
             training_exit_level STRING OPTIONS (description = 'level of training.'),
@@ -148,29 +160,29 @@ tasks:
             nsf_code_1_desc STRING OPTIONS (description = 'Training Specialties Nomenclature Data – one label per column for ease of use. Maximum 3 labels for one training course. Example: Communication and Information'),
             nsf_code_2_desc STRING OPTIONS (description = 'Training Specialties Nomenclature Data – one label per column for ease of use. Maximum 3 labels for one training course. Example: Communication and Information'),
             nsf_code_3_desc STRING OPTIONS (description = 'Training Specialties Nomenclature Data – one label per column for ease of use. Maximum 3 labels for one training course. Example: Communication and Information'),
-            nsf_code_1 STRING OPTIONS (description = 'Training Specialties Nomenclature Data – one label per column for ease of use. Maximum 3 labels for one training course. Example: 326'),
-            nsf_code_2 STRING OPTIONS (description = 'Training Specialties Nomenclature Data – one label per column for ease of use. Maximum 3 labels for one training course. Example: 321'),
-            nsf_code_3 STRING OPTIONS (description = 'Training Specialties Nomenclature Data – one label per column for ease of use. Maximum 3 labels for one training course. Example: 320'),
-            code_certification STRING OPTIONS (description = 'Certification code corresponding to certification_title. Example: 106655'),
-            provider_id STRING OPTIONS (description = 'Establishment unique ID corresponding to provider. Example: 30540504500603'),
-            training_id STRING OPTIONS (description = 'Trianing Id. Example: 30540504500603_ENCH22-14452-RS7041'),
-            training_title STRING OPTIONS (description = 'Trianing title. Example: Construction Machinery Training CACES® R482 Cat. B1 Experienced'),
-            strong_points STRING OPTIONS (description = 'Supplement to the expected training results. Example: Qualified professionals. We offer infrastructure and equipment to replicate real-life working conditions and enable you to obtain CACES certification in other categories. Please contact us.'),
-            training_objective STRING OPTIONS (description = 'Description of training objectives. Example: Example: Update the theoretical knowledge and practical know-how necessary for the safe operation of construction machinery'),
-            training_content STRING OPTIONS (description = 'Description of the training content'),
-            expected_training_results STRING OPTIONS (description = 'Description of the expected results of the training. Example: Certificate of aptitude for safe driving (CACES®) for construction machinery in the category concerned, if the result is positive in accordance with CNAMTS Recommendation R 482'),
-            trianing_module_count INTEGER OPTIONS (description = 'Number of separate training actions for the training concerned. Example: 2'),
-            nb_session_active INTEGER OPTIONS (description = 'Number of active sessions for the training concerned. Example: 2'),
-            nb_remote_session INTEGER OPTIONS (description = 'Number of sessions open for registration, with a remote attendance option. Example: 0'),
+            code_nsf_1 STRING OPTIONS (description = 'Training Specialties Nomenclature Data – one label per column for ease of use. Maximum 3 labels for one training course. Example: 326'),
+            code_nsf_2 STRING OPTIONS (description = 'Training Specialties Nomenclature Data – one label per column for ease of use. Maximum 3 labels for one training course. Example: 321'),
+            code_nsf_3 STRING OPTIONS (description = 'Training Specialties Nomenclature Data – one label per column for ease of use. Maximum 3 labels for one training course. Example: 320'),
+            code_certifinfo STRING OPTIONS (description = 'Certification code corresponding to certification_title. Example: 106655'),
+            provider_ID STRING OPTIONS (description = 'Establishment unique ID corresponding to provider. Example: 30540504500603'),
+            training_ID STRING OPTIONS (description = 'Trianing Id. Example: 30540504500603_ENCH22-14452-RS7041'),
+            title STRING OPTIONS (description = 'Trianing title. Example: Construction Machinery Training CACES® R482 Cat. B1 Experienced'),
+            strengths STRING OPTIONS (description = 'Supplement to the expected training results. Example: Qualified professionals. We offer infrastructure and equipment to replicate real-life working conditions and enable you to obtain CACES certification in other categories. Please contact us.'),
+            objectif_formation STRING OPTIONS (description = 'Description of training objectives. Example: Example: Update the theoretical knowledge and practical know-how necessary for the safe operation of construction machinery'),
+            contenu_formation STRING OPTIONS (description = 'Description of the training content'),
+            resultats_attendus_formation STRING OPTIONS (description = 'Description of the expected results of the training. Example: Certificate of aptitude for safe driving (CACES®) for construction machinery in the category concerned, if the result is positive in accordance with CNAMTS Recommendation R 482'),
+            nb_action INTEGER OPTIONS (description = 'Number of separate training actions for the training concerned. Example: 2'),
+            nb_active_session INTEGER OPTIONS (description = 'Number of active sessions for the training concerned. Example: 2'),
+            nb_distant_session INTEGER OPTIONS (description = 'Number of sessions open for registration, with a remote attendance option. Example: 0'),
             duration_min INTEGER OPTIONS (description = 'Minimum of the total number of hours of the actions concerned. Example: 14'),
             duration_max INTEGER OPTIONS (description = 'Maximum of the total number of hours of the actions concerned. Example: 14'),
             duration_mean INTEGER OPTIONS (description = 'Average of the total number of hours of the actions concerned. Example: 14'),
-            fees_min NUMERIC OPTIONS (description = 'Minimum fees including all taxes for the actions concerned. Example: 790.8'),
-            fees_max NUMERIC OPTIONS (description = 'Maximum fees including all taxes for the actions concerned. Example: 790.8'),
-            fees_mean NUMERIC OPTIONS (description = 'Average fees including all taxes for the actions concerned. Example: 790.8'),
-            department_code STRING OPTIONS (description = 'Department code of the training location corresponding to the field department. Example: 33'),
-            region_code STRING OPTIONS (description = 'Training location region code corresponding to the field Region. Example: 75'),
-            nb_hours INTEGER OPTIONS (description = 'Sum of the hourly volumes available for training. Example: 540'),
+            cost_min NUMERIC OPTIONS (description = 'Minimum fees including all taxes for the actions concerned. Example: 790.8'),
+            cost_max NUMERIC OPTIONS (description = 'Maximum fees including all taxes for the actions concerned. Example: 790.8'),
+            cost_mean NUMERIC OPTIONS (description = 'Average fees including all taxes for the actions concerned. Example: 790.8'),
+            code_departement STRING OPTIONS (description = 'Department code of the training location corresponding to the field department. Example: 33'),
+            code_region STRING OPTIONS (description = 'Training location region code corresponding to the field Region. Example: 75'),
+            nbaction_nbheures INTEGER OPTIONS (description = 'Sum of the hourly volumes available for training. Example: 540'),
             coderegion_export STRING OPTIONS (description = 'Training location region code. Example: 75')
           )
           OPTIONS (
@@ -186,10 +198,9 @@ tasks:
           SELECT
             MD5(CONCAT(
               COALESCE(CAST(date_extract AS STRING), ""),
-              COALESCE(CAST(provider AS STRING), ""),
+              COALESCE(CAST(provider_ID AS STRING), ""),
               COALESCE(CAST(department AS STRING), ""),
-              COALESCE(CAST(training_id AS STRING), ""),
-              COALESCE(CAST(region AS STRING), "")
+              COALESCE(CAST(training_ID AS STRING), "")
             )) AS unique_row_id,
             *
           FROM `{{kv('GCP_PROJECT_ID')}}.courses.courses_ext`;
@@ -202,12 +213,22 @@ tasks:
           ON T.unique_row_id = S.unique_row_id
           WHEN NOT MATCHED THEN
             INSERT (unique_row_id, date_extract, provider, department, region, type_referential, code_rs, code_rncp, certification_title, training_exit_level, code_formacode_1, code_formacode_2, code_formacode_3, code_formacode_4, code_formacode_5, main_formacode_desc, code_rome_1, code_rome_2, code_rome_3, code_rome_4, code_rome_5, nsf_code_1_desc, nsf_code_2_desc, nsf_code_3_desc, nsf_code_1, nsf_code_2, nsf_code_3, code_certification, provider_id, training_id, training_title, strong_points, training_objective, training_content, expected_training_results, trianing_module_count, nb_session_active, nb_remote_session, duration_min, duration_max, duration_mean, fees_min, fees_max, fees_mean, department_code, region_code, nb_hours, coderegion_export)
-            VALUES (S.unique_row_id, S.date_extract, S.provider, S.department, S.region, S.type_referential, S.code_rs, S.code_rncp, S.certification_title, S.training_exit_level, S.code_formacode_1, S.code_formacode_2, S.code_formacode_3, S.code_formacode_4, S.code_formacode_5, S.main_formacode_desc, S.code_rome_1, S.code_rome_2, S.code_rome_3, S.code_rome_4, S.code_rome_5, S.nsf_code_1_desc, S.nsf_code_2_desc, S.nsf_code_3_desc, S.nsf_code_1, S.nsf_code_2, S.nsf_code_3, S.code_certification, S.provider_id, S.training_id, S.training_title, S.strong_points, S.training_objective, S.training_content, S.expected_training_results, S.trianing_module_count, S.nb_session_active, S.nb_remote_session, S.duration_min, S.duration_max, S.duration_mean, S.fees_min, S.fees_max, S.fees_mean, S.department_code, S.region_code, S.nb_hours, S.coderegion_export);
+            VALUES (S.unique_row_id, S.date_extract, S.provider, S.department, S.region, S.type_referentiel, S.code_inventaire, S.code_rncp, S.certification_title, S.training_exit_level, S.code_formacode_1, S.code_formacode_2, S.code_formacode_3, S.code_formacode_4, S.code_formacode_5, S.main_formacode_desc, S.code_rome_1, S.code_rome_2, S.code_rome_3, S.code_rome_4, S.code_rome_5, S.nsf_code_1_desc, S.nsf_code_2_desc, S.nsf_code_3_desc, S.code_nsf_1, S.code_nsf_2, S.code_nsf_3, S.code_certifinfo, S.provider_ID, S.training_ID, S.title, S.strengths, S.objectif_formation, S.contenu_formation, S.resultats_attendus_formation, S.nb_action, S.nb_active_session, S.nb_distant_session, S.duration_min, S.duration_max, S.duration_mean, S.cost_min, S.cost_max, S.cost_mean, S.code_departement, S.code_region, S.nbaction_nbheures, S.coderegion_export);
 
   - id: if_enrollments
     type: io.kestra.plugin.core.flow.If
     condition: "{{inputs.courses_or_enrollments == 'enrollments'}}"
     then:
+      - id: delete_gcs_folders_e
+        type: io.kestra.plugin.core.flow.ForEach
+        values:
+          - "{{render(vars.gcs_core)}}/enrollments_raw_parquet/"
+          - "{{render(vars.gcs_core)}}/enrollments_filtered/"
+        tasks:
+          - id: delete_single_folder_e
+            type: io.kestra.plugin.gcp.gcs.DeleteList
+            from: "{{ taskrun.value }}"
+
       - id: workingDirectory_e
         type: io.kestra.plugin.core.flow.WorkingDirectory
         tasks:
@@ -283,8 +304,8 @@ tasks:
             provider_id STRING OPTIONS (description = 'Establishment unique ID corresponding to provider. Example: 45331683800045'),
             provider STRING OPTIONS (description = 'OLIVIER DUPEYRE FORMATION'),
             training_entries INTEGER OPTIONS (description = 'Volume of trainees having started their training according to the date of entry into training declared by the training organization. Example: 4'),
-            partial_achievement_exits INTEGER OPTIONS (description = 'Volume of trainees who completed their training without having followed it in full based on the training completion date declared by the training organization. Example: 0'),
-            complete_achievement_exits INTEGER OPTIONS (description = 'Volume of trainees having completed their training by following it in full according to the training completion date declared by the training organization. Example: 4'),
+            partial_completion_exits INTEGER OPTIONS (description = 'Volume of trainees who completed their training without having followed it in full based on the training completion date declared by the training organization. Example: 0'),
+            total_completion_exits INTEGER OPTIONS (description = 'Volume of trainees having completed their training by following it in full according to the training completion date declared by the training organization. Example: 4'),
             load_date DATE OPTIONS (description = 'date when reported by the provider. Example: 2025-03-03')
           )
           OPTIONS (
@@ -338,7 +359,7 @@ tasks:
           beforeCommands:
             - pip install deep_translator
           commands:
-            - /opt/bitnami/spark/bin/spark-submit --jars ./lib/gcs-connector-hadoop3-2.2.5.jar --name GCS_Spark_Job --master local[*] ./scripts/05_formacode_conversion.py --input ./data/formacode_description.csv --output {{render(vars.gcs_formacode_translated)}}
+            - /opt/bitnami/spark/bin/spark-submit --jars ./lib/gcs-connector-hadoop3-2.2.5.jar --name GCS_Spark_Job --master local[*] ./scripts/05_formacode_conversion_field.py --input ./data/formacode_description.csv --output {{render(vars.gcs_formacode_translated)}}
        
       - id: upload_bigquery_f
         type: io.kestra.plugin.gcp.bigquery.LoadFromGcs
@@ -363,3 +384,4 @@ pluginDefaults:
       project_id: "{{ kv('SECRET_PROJECT_ID') }}"
       private_key: "{{ kv('SECRET_PRIVATE_KEY') }}"
       client_email: "{{ kv('SECRET_CLIENT_EMAIL') }}"
+      github_token: "{{ kv('GITHUB_TOKEN') }}"
