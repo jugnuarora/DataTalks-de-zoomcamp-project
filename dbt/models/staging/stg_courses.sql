@@ -27,7 +27,7 @@ WITH courses_data as
 rn_courses as
 (
   select *,
-    row_number() over(partition by course_month, provider, department, certification_title, code_formacode_1, code_formacode_2, code_formacode_3, code_formacode_4, code_formacode_5, provider_id, training_id ORDER BY date_extract DESC) as rn
+    row_number() over(partition by course_month, training_id, department ORDER BY date_extract DESC) as rn
   from courses_data
 )
 SELECT
