@@ -62,13 +62,13 @@ df_courses = df_courses.withColumn("code_inventaire", df_courses["code_inventair
 df_courses_date = df_courses.withColumn('date_extract', F.to_date(F.col('date_extract'), 'yyyy-MM-dd'))
 
 #filter_values = [
-    "Informatique, traitement de l'information, réseaux de transmission",
-    "Enseignement, formation",
-    "Commerce, vente",
-    "Comptabilite, gestion",
-    "Spécialités pluri-scientifiques",
-    "Spécialites plurivalentes de la communication et de l'information"
-]
+    # "Informatique, traitement de l'information, réseaux de transmission",
+    # "Enseignement, formation",
+    # "Commerce, vente",
+    # "Comptabilite, gestion",
+    # "Spécialités pluri-scientifiques",
+    # "Spécialites plurivalentes de la communication et de l'information"
+#]
 
 #df_courses_filtered = df_courses_date.filter(col("libelle_nsf_1").isin(filter_values))
 
