@@ -70,7 +70,7 @@ filter_values = [
     "Spécialites plurivalentes de la communication et de l'information"
 ]
 
-df_courses_filtered = df_courses_date.filter(col("libelle_nsf_1").isin(filter_values))
+#df_courses_filtered = df_courses_date.filter(col("libelle_nsf_1").isin(filter_values))
 
 # Define the columns to rename and their new names
 columns_to_rename = {
