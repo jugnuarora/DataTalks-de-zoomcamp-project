@@ -1,0 +1,74 @@
+id: 03_formacode_pipeline
+namespace: france-courses-enrollments
+
+variables:
+  gcs_formacode_translated: "gs://{{kv('GCP_BUCKET_NAME')}}/formacode_translated"
+
+tasks:
+  - id: workingDirectory_c
+    type: io.kestra.plugin.core.flow.WorkingDirectory
+    tasks:
+    - id: cloneRepository_c
+      type: io.kestra.plugin.git.Clone
+      url: https://github.com/jugnuarora/france_courses_enrollments.git
+      username: jugnuarora
+      password: "{{ kv('GITHUB_TOKEN') }}"
+      branch: main
+
+    - id: download_and_process
+      type: io.kestra.plugin.scripts.shell.Commands
+      taskRunner:
+        type: io.kestra.plugin.core.runner.Process
+      commands:
+        - mkdir -p ./data_tmp
+        - wget https://formacode.centre-inffo.fr/IMG/zip/fcod_13_25_10_2019.zip -O ./data_tmp/formacode_data.zip --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        - unzip -o ./data_tmp/formacode_data.zip -d ./data_tmp
+        - ls -a ./data_tmp
+        
+    - id: pythonScript_c
+      type: io.kestra.plugin.scripts.python.Commands
+      warningOnStdErr: false
+      docker:
+        image: ghcr.io/kestra-io/pydata:latest
+      beforeCommands:
+        - pip install -r requirements.txt > /dev/null
+      commands:
+        - python scripts/05_formacode_download.py --input ./data_tmp/FCod.xls --output ./data_tmp/formacode_description_new.csv
+
+    - id: spark_job_f
+      type: io.kestra.plugin.spark.SparkCLI
+      inputFiles:
+        gcs.json: "{{ kv('GCP_CREDS') }}" # Read GCP credentials from KV store
+      docker:
+        image: bitnami/spark
+      beforeCommands:
+        - pip install deep_translator
+        - ls -a ./data_tmp
+      commands:
+        - /opt/bitnami/spark/bin/spark-submit --jars ./lib/gcs-connector-hadoop3-2.2.5.jar --name GCS_Spark_Job --master local[*] ./scripts/06_formacode_spark_translation.py --input ./data_tmp/formacode_description_new.csv --output {{render(vars.gcs_formacode_translated)}}
+
+  - id: upload_bigquery_f
+    type: io.kestra.plugin.gcp.bigquery.LoadFromGcs
+    from:
+      - "{{render(vars.gcs_formacode_translated)}}/*.parquet"
+    destinationTable: "{{kv('GCP_DATASET')}}.source_tables.formacode"
+    format: PARQUET
+    writeDisposition: WRITE_TRUNCATE
+          
+  - id: purge_files
+    type: io.kestra.plugin.core.storage.PurgeCurrentExecutionFiles
+    description: If you'd like to explore Kestra outputs, disable it.
+    disabled: false
+
+pluginDefaults:
+  - type: io.kestra.plugin.gcp
+    values:
+      serviceAccount: "{{ kv('GCP_CREDS') }}"
+      projectId: "{{ kv('GCP_PROJECT_ID') }}"
+      location: "{{ kv('GCP_LOCATION') }}"
+      bucket: "{{ kv('GCP_BUCKET_NAME') }}"
+      bucket_url: "{{ kv('SECRET_BUCKET_URL') }}"
+      project_id: "{{ kv('SECRET_PROJECT_ID') }}"
+      private_key: "{{ kv('SECRET_PRIVATE_KEY') }}"
+      client_email: "{{ kv('SECRET_CLIENT_EMAIL') }}"
+      github_token: "{{ kv('GITHUB_TOKEN') }}"
