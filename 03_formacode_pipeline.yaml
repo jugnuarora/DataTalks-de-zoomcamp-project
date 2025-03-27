@@ -45,14 +45,15 @@ tasks:
         - pip install deep_translator
         - ls -a ./data_tmp
       commands:
-        - /opt/bitnami/spark/bin/spark-submit --jars ./lib/gcs-connector-hadoop3-2.2.5.jar --name GCS_Spark_Job --master local[*] ./scripts/06_formacode_spark_translation.py --input ./data_tmp/formacode_description_new.csv --output {{render(vars.gcs_formacode_translated)}}_new
+        - /opt/bitnami/spark/bin/spark-submit --jars ./lib/gcs-connector-hadoop3-2.2.5.jar --name GCS_Spark_Job --master local[*] ./scripts/06_formacode_spark_translation.py --input ./data_tmp/formacode_description_new.csv --output {{render(vars.gcs_formacode_translated)}}
 
   - id: upload_bigquery_f
     type: io.kestra.plugin.gcp.bigquery.LoadFromGcs
     from:
-      - "{{render(vars.gcs_formacode_translated)}}_new/*.parquet"
-    destinationTable: "{{kv('GCP_DATASET')}}.source_tables_new.formacode"
+      - "{{render(vars.gcs_formacode_translated)}}/*.parquet"
+    destinationTable: "{{kv('GCP_DATASET')}}.source_tables.formacode"
     format: PARQUET
+    writeDisposition: WRITE_TRUNCATE
           
   - id: purge_files
     type: io.kestra.plugin.core.storage.PurgeCurrentExecutionFiles
