@@ -11,7 +11,7 @@ with enrollments_data as
         code_rncp,
         code_rs,
         certification_title,
-        {{remove_dot_zero("code_certification")}} as code_certification,
+        code_certification,
         provider_id,
         provider,
         training_entries
@@ -21,7 +21,7 @@ with enrollments_data as
 enrollments_formacode AS
 (
   SELECT
-    e.*, c.fcod_1, c.fcod_2, c.fcod_3, c.fcod_4, c.fcod_5
+    e.*, c.code_formacode_1, c.code_formacode_2, c.code_formacode_3, c.code_formacode_4, c.code_formacode_5
 FROM
     enrollments_data AS e
     LEFT JOIN {{ref('stg_courses')}} as c
@@ -36,9 +36,9 @@ rn_enrollments as
 --with rn_enrollments as
 (
   select *,
-    row_number() over(partition by year_month, code_rncp, code_rs, certification_title, code_certification, provider_id, provider, fcod_1, fcod_2, fcod_3, fcod_4, fcod_5) as rn
+    row_number() over(partition by year_month, code_rncp, code_rs, certification_title, code_certification, provider_id, provider, code_formacode_1, code_formacode_2, code_formacode_3, code_formacode_4, code_formacode_5) as rn
   from enrollments_formacode
 )
 select *
 from rn_enrollments
-where rn = 1 and fcod_1 is not null and training_entries != 0
+where rn = 1 and code_formacode_1 is not null and training_entries != 0
