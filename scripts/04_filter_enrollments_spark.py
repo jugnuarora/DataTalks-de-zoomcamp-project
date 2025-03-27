@@ -46,36 +46,31 @@ df_enrollments = spark.read.option("header", "true").parquet(input_file)
 # Cast the 'code_inventaire' column to a string
 df_enrollments = df_enrollments\
     .withColumn('annee_mois', F.to_date(df_enrollments["annee_mois"], "yyyy-MM"))\
-    .withColumn("annee", df_enrollments["annee"].cast(types.StringType()))\
-    .withColumn("mois", df_enrollments["mois"].cast(types.StringType()))\
-    .withColumn("code_rncp", df_enrollments["code_rncp"].cast(types.StringType()))\
-    .withColumn("code_rs", df_enrollments["code_rs"].cast(types.StringType()))\
-    .withColumn("code_certifinfo", df_enrollments["code_certifinfo"].cast(types.StringType()))\
-    .withColumn("siret_of_contractant", df_enrollments["siret_of_contractant"].cast(types.StringType()))\
+    .withColumn("code_certifinfo", df_enrollments["code_certifinfo"].cast(types.IntegerType()))\
     .withColumn("date_chargement", F.to_date(df_enrollments["date_chargement"], "yyyy-MM-dd"))
 
 # Define the columns to rename and their new names
-columns_to_rename = {
-        'annee_mois': 'year_month',
-        'annee': 'year',
-        'mois': 'month',
-        'type_referentiel': 'type_referential',
-        'code_certifinfo': 'code_certification',
-        'intitule_certification': 'certification_title',
-        'siret_of_contractant': 'provider_id',
-        'raison_sociale_of_contractant': 'provider',
-        'entrees_formation': 'training_entries',
-        'sorties_realisation_partielle': 'partial_completion_exits',
-        'sorties_realisation_totale': 'total_completion_exits',
-        'date_chargement': 'load_date'
-    }
+# columns_to_rename = {
+#         'annee_mois': 'year_month',
+#         'annee': 'year',
+#         'mois': 'month',
+#         'type_referentiel': 'type_referential',
+#         'code_certifinfo': 'code_certification',
+#         'intitule_certification': 'certification_title',
+#         'siret_of_contractant': 'provider_id',
+#         'raison_sociale_of_contractant': 'provider',
+#         'entrees_formation': 'training_entries',
+#         'sorties_realisation_partielle': 'partial_completion_exits',
+#         'sorties_realisation_totale': 'total_completion_exits',
+#         'date_chargement': 'load_date'
+#     }
 
-# Rename the columns
-for old_name, new_name in columns_to_rename.items():
-    if old_name in df_enrollments.columns:
-        df_enrollments = df_enrollments.withColumnRenamed(old_name, new_name)
-    else:
-        print(f"Column '{old_name}' not found, skipping rename.")
+# # Rename the columns
+# for old_name, new_name in columns_to_rename.items():
+#     if old_name in df_enrollments.columns:
+#         df_enrollments = df_enrollments.withColumnRenamed(old_name, new_name)
+#     else:
+#         print(f"Column '{old_name}' not found, skipping rename.")
 
 df_enrollments.coalesce(1).write.parquet(output_file, mode='overwrite')
 
