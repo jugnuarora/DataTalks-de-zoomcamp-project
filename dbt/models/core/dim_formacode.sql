@@ -1,11 +1,11 @@
 {{
     config(
-        materialized='view'
+        materialized='table'
     )
 }}
 
 SELECT 
-    f.formacode,
+    formacode,
     description_en,
     REGEXP_REPLACE(f.field_en, r'^\d+\s+', '') AS field_en
-FROM {{ source('staging_tmp', 'formacode') }} f
+FROM {{ source('staging', 'formacode') }} f

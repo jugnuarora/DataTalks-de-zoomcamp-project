@@ -5,14 +5,14 @@
 }}
 
 SELECT 
-    course_month,
+    year_month,
     fu.formacode, 
-    total_nb_trianings,
+    total_enrollments,
     total_nb_providers,
     total_nb_certifications,
-    ROUND(total_nb_trianings / total_nb_providers, 1) AS training_provider_ratio,
+    ROUND(total_enrollments / total_nb_providers, 1) AS enrollments_provider_ratio,
     f.description_en as formacode_description,
     f.field_en as formacode_field
-FROM {{ref('intermediate_courses')}} fu
+FROM {{ref('intermediate_enrollments')}} fu
     LEFT JOIN {{ ref('dim_formacode') }} f ON fu.formacode = f.formacode
-ORDER BY training_provider_ratio DESC
+ORDER BY enrollments_provider_ratio DESC
