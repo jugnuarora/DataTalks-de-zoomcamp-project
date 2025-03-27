@@ -43,15 +43,12 @@ models:
     staging:
       +materialized: view
       +schema: staging
-    intermediate:
+    prep:
       +materialized: view
-      +schema: intermediate
-    core:
+      +schema: prep
+    marts:
       +materialized: table
-      +schema: core
-    #mart:
-    #  +materialized: table
-    #  +schema: mart
+      +schema: marts
 
 seeds:
   +schema: mapping

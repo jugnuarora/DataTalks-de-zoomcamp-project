@@ -8,57 +8,57 @@ WITH formacode_union AS
 (
     SELECT 
         course_month,
-        fcod_1 as formacode, 
+        code_formacode_1 as formacode, 
         COUNT(training_id) as trianing_count,
-        COUNT(DISTINCT COALESCE(provider, provider_id)) AS provider_count,
+        COUNT(DISTINCT COALESCE(provider, cast(provider_id AS STRING))) AS provider_count,
         COUNT(distinct certification_title) as certification_count
     FROM
         {{ref('stg_courses')}}
-    WHERE fcod_1 is not null
+    WHERE code_formacode_1 is not null
     GROUP BY 1, 2
     UNION ALL
     SELECT 
         course_month,
-        fcod_2 as formacode, 
+        code_formacode_2 as formacode, 
         COUNT(training_id) as trianing_count,
-        COUNT(DISTINCT COALESCE(provider, provider_id)) AS provider_count,
+        COUNT(DISTINCT COALESCE(provider, cast(provider_id AS STRING))) AS provider_count,
         COUNT(distinct certification_title) as certification_count
     FROM
         {{ref('stg_courses')}}
-    WHERE fcod_2 is not null
+    WHERE code_formacode_2 is not null
     GROUP BY 1, 2
     UNION ALL
     SELECT 
         course_month,
-        fcod_3 as formacode, 
+        code_formacode_3 as formacode, 
         COUNT(training_id) as trianing_count,
-        COUNT(DISTINCT COALESCE(provider, provider_id)) AS provider_count,
+        COUNT(DISTINCT COALESCE(provider, cast(provider_id AS STRING))) AS provider_count,
         COUNT(distinct certification_title) as certification_count
     FROM
         {{ref('stg_courses')}}
-    WHERE fcod_3 is not null
+    WHERE code_formacode_3 is not null
     GROUP BY 1, 2
     UNION ALL
     SELECT 
         course_month,
-        fcod_4 as formacode, 
+        code_formacode_4 as formacode, 
         COUNT(training_id) as trianing_count,
-        COUNT(DISTINCT COALESCE(provider, provider_id)) AS provider_count,
+        COUNT(DISTINCT COALESCE(provider, cast(provider_id AS STRING))) AS provider_count,
         COUNT(distinct certification_title) as certification_count
     FROM
         {{ref('stg_courses')}}
-    WHERE fcod_4 is not null
+    WHERE code_formacode_4 is not null
     GROUP BY 1, 2
     UNION ALL
     SELECT 
         course_month,
-        fcod_5 as formacode, 
+        code_formacode_5 as formacode, 
         COUNT(training_id) as trianing_count,
-        COUNT(DISTINCT COALESCE(provider, provider_id)) AS provider_count,
+        COUNT(DISTINCT COALESCE(provider, cast(provider_id AS STRING))) AS provider_count,
         COUNT(distinct certification_title) as certification_count
     FROM
         {{ref('stg_courses')}}
-    WHERE fcod_5 is not null
+    WHERE code_formacode_5 is not null
     GROUP BY 1, 2
 
 )
