@@ -16,6 +16,7 @@ try:
     df = df.iloc[:, [0, 1, 6, 9]]
     df.columns = ['formacode', 'description', 'field', 'generic_term']
     df.to_csv(output_file, index=False)
+    num_records = len(df) 
     print(f"CSV data written to {output_file} with {num_records} records.") #added print statement for confirmation.
 
 except FileNotFoundError:
