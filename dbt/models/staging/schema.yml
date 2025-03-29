@@ -11,3 +11,176 @@ sources:
       - name: enrollments
       - name: formacode
 
+models:
+  - name: stg_courses
+    description: "Courses enrolled in that particular month."
+    columns:
+      - name: course_month
+        data_type: string
+        description: "The year and month of the courses extraction. Example: 2025-03."
+        tests:
+          - not_null:
+              severity: warn
+
+      - name: date_extract
+        data_type: date
+        description: "Dataset upload date. Example: 2025-03-19."
+        tests:
+          - not_null:
+              severity: warn
+
+      - name: provider
+        data_type: string
+        description: "company providing the course. Example: AFTRAL."
+
+      - name: certification_title
+        data_type: string
+        description: "Certification Title. Example: Certificate of aptitude for safe driving (CACES) Recommendation 482 category B1: Sequential movement extraction equipment."
+
+      - name: code_certification
+        data_type: int64
+        description: "Certification code corresponding to certification_title. Example: 106655."
+
+      - name: code_rncp
+        data_type: int64
+        description: "National Directory of Professional Certifications Code. Example: -1 (Because it has code_rs)."
+
+      - name: code_rs
+        data_type: int64
+        description: "Certifications listed in the RS inventory. Example: 7041."
+
+      - name: code_formacode_1
+        data_type: int64
+        description: "It represents the 5 most relevant Formacode codes for each training course. It is like a search word or a classification system to categorise training programs by skills it aims at. Example: 31025 - Data Analytics, 31026 - Data Science."
+        tests:
+          - relationships:
+              to: ref('dim_formacode')
+              field: formacode
+              severity: warn
+
+      - name: code_formacode_2
+        data_type: int64
+        description: "It represents the 5 most relevant Formacode codes for each training course. It is like a search word or a classification system to categorise training programs by skills it aims at. Example: 31025 - Data Analytics, 31026 - Data Science."
+        tests:
+          - relationships:
+              to: ref('dim_formacode')
+              field: formacode
+              severity: warn
+
+      - name: code_formacode_3
+        data_type: int64
+        description: "It represents the 5 most relevant Formacode codes for each training course. It is like a search word or a classification system to categorise training programs by skills it aims at. Example: 31025 - Data Analytics, 31026 - Data Science"
+        tests:
+          - relationships:
+              to: ref('dim_formacode')
+              field: formacode
+              severity: warn
+
+      - name: code_formacode_4
+        data_type: int64
+        description: "It represents the 5 most relevant Formacode codes for each training course. It is like a search word or a classification system to categorise training programs by skills it aims at. Example: 31025 - Data Analytics, 31026 - Data Science."
+        tests:
+          - relationships:
+              to: ref('dim_formacode')
+              field: formacode
+              severity: warn
+
+      - name: code_formacode_5
+        data_type: int64
+        description: "It represents the 5 most relevant Formacode codes for each training course. It is like a search word or a classification system to categorise training programs by skills it aims at. Example: 31025 - Data Analytics, 31026 - Data Science."
+        tests:
+          - relationships:
+              to: ref('dim_formacode')
+              field: formacode
+              severity: warn
+
+      - name: provider_id
+        data_type: int64
+        description: "Establishment unique ID corresponding to provider. Example: 30540504500603."
+
+      - name: training_id
+        data_type: string
+        description: "Trianing Id. Example: 30540504500603_ENCH22-14452-RS7041."
+
+  - name: stg_enrollments
+    description: "Enrollments till date as reported by the reporting entities."
+    columns:
+      - name: year_month
+        data_type: date
+        description: "year_month of entry or exit. Example: 2024-11."
+        tests:
+          - not_null:
+              severity: warn
+
+      - name: code_rncp
+        data_type: int64
+        description: "If completed (different from -1), it indicates a certification registered in the National Directory of Professional Certifications. The RNCP lists all professional qualifications recognized by the State, i.e. 'vocational' training. Example: -1."
+
+      - name: code_rs
+        data_type: int64
+        description: "If filled in (different from -1), it indicates a certification registered in the Specific Directory. The RS groups together skills complementary to professional certifications. This includes regulatory obligations, cross-disciplinary skills certifications, and certifications complementary to a profession. Example: 5055."
+
+      - name: certification_title
+        data_type: string
+        description: "The title of the certification. Example: Certificat d'aptitude à conduire en sécurité (CACES) - Recommandation 489 catégorie 1A : Transpalettes à conducteur porté sans élévation du poste de conduite."
+
+      - name: code_certification
+        data_type: int64
+        description: "The certification code in the Certif Info reference system of the CARIF-OREF network and ONISEP. Example: 106691."
+
+      - name: provider_id
+        data_type: int64
+        description: "Establishment unique ID corresponding to provider. Example: 45331683800045."
+
+      - name: provider
+        data_type: string
+        description: "company providing the course. Example: AFTRAL."
+
+      - name: training_entries
+        data_type: int64
+        description: "Volume of trainees having started their training according to the date of entry into training declared by the training organization. Example: 4."
+
+      - name: code_formacode_1
+        data_type: int64
+        description: "It represents the 5 most relevant Formacode codes for each training course. It is like a search word or a classification system to categorise training programs by skills it aims at. Example: 31025 - Data Analytics, 31026 - Data Science."
+        tests:
+          - relationships:
+              to: ref('dim_formacode')
+              field: formacode
+              severity: warn
+
+      - name: code_formacode_2
+        data_type: int64
+        description: "It represents the 5 most relevant Formacode codes for each training course. It is like a search word or a classification system to categorise training programs by skills it aims at. Example: 31025 - Data Analytics, 31026 - Data Science."
+        tests:
+          - relationships:
+              to: ref('dim_formacode')
+              field: formacode
+              severity: warn
+
+      - name: code_formacode_3
+        data_type: int64
+        description: "It represents the 5 most relevant Formacode codes for each training course. It is like a search word or a classification system to categorise training programs by skills it aims at. Example: 31025 - Data Analytics, 31026 - Data Science."
+        tests:
+          - relationships:
+              to: ref('dim_formacode')
+              field: formacode
+              severity: warn
+
+      - name: code_formacode_4
+        data_type: int64
+        description: "It represents the 5 most relevant Formacode codes for each training course. It is like a search word or a classification system to categorise training programs by skills it aims at. Example: 31025 - Data Analytics, 31026 - Data Science."
+        tests:
+          - relationships:
+              to: ref('dim_formacode')
+              field: formacode
+              severity: warn
+
+      - name: code_formacode_5
+        data_type: int64
+        description: "It represents the 5 most relevant Formacode codes for each training course. It is like a search word or a classification system to categorise training programs by skills it aims at. Example: 31025 - Data Analytics, 31026 - Data Science"
+        tests:
+          - relationships:
+              to: ref('dim_formacode')
+              field: formacode
+              severity: warn

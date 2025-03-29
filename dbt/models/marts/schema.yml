@@ -1,0 +1,97 @@
+version: 2
+
+models:
+  - name: fact_enrollments
+    description: "Enrollments fact table having total number of enrollments, providers and certifications in a given month for a particular formacode along with the description of formacode and the field it belongs to."
+    columns:
+      - name: year_month
+        data_type: date
+        description: "year_month of entry or exit. Example: 2024-11."
+
+      - name: formacode
+        data_type: int64
+        description: "It represents the 5 most relevant Formacode codes for each training course. It is like a search word or a classification system to categorise training programs by skills it aims at. Example: 31025 - Data Analytics, 31026 - Data Scienc."
+        tests:
+          - relationships:
+              to: ref('dim_formacode')
+              field: formacode
+              severity: warn
+
+      - name: total_enrollments
+        data_type: int64
+        description: "Total no. of trianings listed in that month for a particular formacode."
+
+      - name: total_nb_providers
+        data_type: int64
+        description: "Total no. providers listed in that month for a particular formacode."
+
+      - name: total_nb_certifications
+        data_type: int64
+        description: "Total no. of certifications listed in that month for a particular formacode."
+
+      - name: enrollments_provider_ratio
+        data_type: float64
+        description: "total_enrollments / total_nb_providers."
+
+      - name: formacode_description
+        data_type: string
+        description: "Description of that particular formacode. Example: 31025 - Data Analytics."
+
+      - name: formacode_field
+        data_type: string
+        description: "More generic field particular course belongs to. Example: IT and information systems."
+
+  - name: dim_formacode
+    description: ""
+    columns:
+      - name: formacode
+        data_type: int64
+        description: "It represents the 5 most relevant Formacode codes for each training course. It is like a search word or a classification system to categorise training programs by skills it aims at. Example: 31025 - Data Analytics, 31026 - Data Scienc."
+        tests:
+          - unique:
+              severity: warn
+          - not_null:
+              severity: warn
+
+      - name: description_en
+        data_type: string
+        description: "Description of that particular formacode. Example: 31025 - Data Analytics."
+
+      - name: field_en
+        data_type: string
+        description: "More generic field particular course belongs to. Example: IT and information systems."
+
+  - name: dim_courses
+    description: ""
+    columns:
+      - name: course_month
+        data_type: string
+        description: "year-month of the courses extract."
+
+      - name: formacode
+        data_type: int64
+        description: "It represents the 5 most relevant Formacode codes for each training course. It is like a search word or a classification system to categorise training programs by skills it aims at. Example: 31025 - Data Analytics, 31026 - Data Scienc."
+
+      - name: total_nb_trianings
+        data_type: int64
+        description: "Total no. of trianings listed in that month for a particular formacode."
+
+      - name: total_nb_providers
+        data_type: int64
+        description: "Total no. providers listed in that month for a particular formacode."
+
+      - name: total_nb_certifications
+        data_type: int64
+        description: "Total no. of certifications listed in that month for a particular formacode."
+
+      - name: training_provider_ratio
+        data_type: float64
+        description: "total_nb_trianings / total_nb_providers"
+
+      - name: formacode_description
+        data_type: string
+        description: "Description of that particular formacode. Example: 31025 - Data Analytics."
+
+      - name: formacode_field
+        data_type: string
+        description: "More generic field particular course belongs to. Example: IT and information systems."
