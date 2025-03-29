@@ -42,18 +42,21 @@ The formacode dataset, in French, requires translation and processing for broade
 **Pipeline Components:**
 
 1.  **Data Ingestion (Batch):**
-    * **Courses Data:** DLT is used to extract the course data from the source, store it as raw data in GCS, perform initial Spark transformations, and load it into BigQuery, partitioned by `data_extracted` and clustered by `code-formacode-1`.
-    * **Enrollments Data:** DLT is used to extract the enrollments data from the source, store it as raw data in GCS, perform initial Spark transformations, and load it into BigQuery, partitioned by `year_month` and clustered by `provider`.
-    * **Formacode Data:** Kestra downloads the Formacode ZIP file, extracts relevant data, translates descriptions and field columns using Spark, and stores the processed data in BigQuery. Broadcast variables in Spark are used for semantic fields translation.
+    * **Courses Data:** DLT is used to extract the course data from the source, store it as raw data in GCS, perform initial Spark transformations, and load it into BigQuery, partitioned by `data_extracted` and clustered by `code-formacode-1`. Everytime it runs, this will upload any new incoming rows while retaining the old ones. 
+    * **Enrollments Data:** DLT is used to extract the enrollments data from the source, store it as raw data in GCS, perform initial Spark transformations, and load it into BigQuery, partitioned by `year_month` and clustered by `provider`. Everytime it runs, this will upload any new incoming rows while retaining the old ones. 
+    * **Formacode Data:** Kestra downloads the Formacode ZIP file, extracts relevant data, translates descriptions and field columns using Spark, and stores the processed data in BigQuery. Broadcast variables in Spark are used for semantic fields translation. This flow will write truncate the file in bigquery which means that it will delete all the old records and insert new. 
+
 2.  **Workflow Orchestration (Kestra):**
     * A single Kestra workflow is created to orchestrate the courses and enrollments data pipelines, scheduled to run on the first Sunday of each month at 3 AM.
     * A seperate kestra workflow is created to handle the formacode download, extraction, translation and upload. It is once in a while job as it remains more or less constant. 
+
 3.  **Data Transformation (dbt Cloud):**
     * dbt Cloud is used to build data models for the final fact and dimension tables in BigQuery.
     * A dbt macro is implemented to remove leading numbers from the `field` column in the Formacode data. This macro could be leveraged in future to remove leading digits in `generic_term`.
     * An environment variable `DBT_ENVIRONMENT` is used to control data limiting in the `stg_courses` model (development: limit to 100 rows, production: full dataset). This can be overridden using local variables `limit_data` and further by passing false to the variable in command-bar.
     * Tests are included in the dbt project to ensure data integrity. There are warnings issued showing that there are few formacodes listed in courses which are not part of formacode dimension file. 
     * The project includes both development and production environments, with CI/CD job for deployment.
+
 4.  **Data Warehouse (BigQuery):**
     * BigQuery is used as the data warehouse, with tables partitioned and clustered for optimal query performance.
     * Local SQL queries are provided for data verification and reconciliation at different steps. 
@@ -68,6 +71,7 @@ The dashboard includes two tiles:
     - LOW: might indicate less demand due to lower number of trainings or overcrowdedness due to high number of providers.
     - HIGH: might indicate oversaturation due to too many trainings or less competition due to less number of providers. 
     We suggest to look at the TPR between 5 and 15. 
+
 2.  **Monthly Enrollment Trends:** A line graph illustrating the monthly enrollment trends for selected courses or providers, highlighting temporal patterns and growth.
 
 ## Reproducibility
@@ -111,14 +115,21 @@ The dashboard includes two tiles:
         . 03_formacode_pipeline.yaml
 
     __STEP 3:__ Execute `01_gcp_kv.yaml` to set up the key value pair. Later on you can modify them with the values that corresponds to your set-up by going to namespaces, selecting `france-courses-enrollments` and then selecting `KV Store`. You will need following key value pairs:
+
         . GCP_CREDS - It has the same content as the json file generated from google cloud.
+
         . GCP_DATASET - It is the same name as database in Bigquery.
+
         . GCP_BUCKET_NAME - It is the same name as Bucket in Google Cloud Storage.
+
         . GCP_PROJECT_ID - It is the Project Id that is automatically generated when creating the new Project on Google Cloud.
+
         . GCP_LOCATION - I had chosen europe-west1
-        . SECRET_PROJECT_ID - Same as GCP_PROJECT_ID but needed for dlt
+
         . SECRET_CLIENT_EMAIL - Retrieve it from the json file downloaded
+
         . SECRET_PRIVATE_KEY - Retrieve it from the json file downloaded
+
         . SECRET_BUCKET_URL - URL for GCS `gs://....`
 
 4.  **Bigquery Set-up:**
@@ -157,7 +168,10 @@ The dashboard includes two tiles:
     * Trigger the Kestra workflow 03_formacode_pipeline.yaml to start the data ingestion and processing pipeline for formacode. This will take some time to execute (almost 45-50 mins) because of the translation.
 
 6.  **Verify Data:**
-    * run the provided sql queries (local_queries) to verify the data.
+    * run the provided sql queries (local_queries) to verify the data. The final tables should have the count as below:
+        . courses - ~195K records
+        . enrollments - ~181K records
+        . formacode - ~3379 records
 
 7.  **Run dbt Models:**
     * Execute the dbt models in dbt Cloud to transform the data. You can execute in one of the ways listed below:
