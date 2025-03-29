@@ -1,0 +1,53 @@
+version: 2
+
+models:
+  - name: prep_enrollments
+    description: "Total Enrollments, provider, and certifications grouped by year-month and formacode."
+    columns:
+      - name: year_month
+        data_type: date
+        description: "year_month of entry or exit. Example: 2024-11."
+
+      - name: formacode
+        data_type: int64
+        description: "It represents the 5 most relevant Formacode codes for each training course. It is like a search word or a classification system to categorise training programs by skills it aims at. Example: 31025 - Data Analytics, 31026 - Data Scienc."
+
+      - name: total_enrollments
+        data_type: int64
+        description: "Total participants enrolled."
+
+      - name: total_nb_providers
+        data_type: int64
+        description: "Total no. of provideres providing the course for that particular formacode in that month."
+
+      - name: total_nb_certifications
+        data_type: int64
+        description: "Total no. of certification for that particular formacode in that month."
+
+  - name: prep_courses
+    description: "Total no. of trianings, providers, certifications listed in that month for a particular formacode."
+    columns:
+      - name: course_month
+        data_type: string
+        description: "year-month of the courses extract."
+
+      - name: formacode
+        data_type: int64
+        description: "It represents the 5 most relevant Formacode codes for each training course. It is like a search word or a classification system to categorise training programs by skills it aims at. Example: 31025 - Data Analytics, 31026 - Data Scienc."
+        tests:
+          - relationships:
+              to: ref('dim_formacode')
+              field: formacode
+              severity: warn
+
+      - name: total_nb_trianings
+        data_type: int64
+        description: "Total no. of trianings listed in that month for a particular formacode."
+
+      - name: total_nb_providers
+        data_type: int64
+        description: "Total no. providers listed in that month for a particular formacode."
+
+      - name: total_nb_certifications
+        data_type: int64
+        description: "Total no. of certifications listed in that month for a particular formacode."
