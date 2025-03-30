@@ -1,4 +1,4 @@
-```
+```mermaid
 graph LR
     A[Raw Data Sources: Courses, Enrollments, Formacode] --> B(DLT: Data Ingestion);
     B --> C[GCS: Raw Data Lake];
