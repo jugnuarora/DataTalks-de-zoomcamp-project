@@ -63,7 +63,7 @@ def translate_udf(input_str): # udf, for dataframe columns.
 # 1. Replace empty fields
 df_formacode = df_formacode.withColumn("field", F.coalesce(F.col("field"), F.lit("000 unknown")))
 
-df_formacode = df_formacode.repartition(16, "field")
+df_formacode = df_formacode.repartition(24, "field")
 
 # 1. Collect unique values
 unique_fields = [x[0] for x in df_formacode.select("field").distinct().collect()]
