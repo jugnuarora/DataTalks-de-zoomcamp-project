@@ -22,14 +22,14 @@ graph LR
         J;
     end
 
-    style A fill:#f9f,stroke:#333,stroke-width:2px;
-    style B fill:#ccf,stroke:#333,stroke-width:2px;
-    style C fill:#efe,stroke:#333,stroke-width:2px;
-    style D fill:#ccf,stroke:#333,stroke-width:2px;
-    style E fill:#efe,stroke:#333,stroke-width:2px;
-    style F fill:#ccf,stroke:#333,stroke-width:2px;
-    style G fill:#efe,stroke:#333,stroke-width:2px;
-    style H fill:#ccf,stroke:#333,stroke-width:2px;
-    style I fill:#efe,stroke:#333,stroke-width:2px;
-    style J fill:#ccf,stroke:#333,stroke-width:2px;
+    style A fill:#f9f,stroke:#333,stroke-width:2px,color:#000;
+    style B fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
+    style C fill:#efe,stroke:#333,stroke-width:2px,color:#000;
+    style D fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
+    style E fill:#efe,stroke:#333,stroke-width:2px,color:#000;
+    style F fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
+    style G fill:#efe,stroke:#333,stroke-width:2px,color:#000;
+    style H fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
+    style I fill:#efe,stroke:#333,stroke-width:2px,color:#000;
+    style J fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
 ```
