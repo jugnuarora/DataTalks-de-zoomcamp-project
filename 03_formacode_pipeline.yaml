@@ -67,8 +67,4 @@ pluginDefaults:
       projectId: "{{ kv('GCP_PROJECT_ID') }}"
       location: "{{ kv('GCP_LOCATION') }}"
       bucket: "{{ kv('GCP_BUCKET_NAME') }}"
-      bucket_url: "{{ kv('SECRET_BUCKET_URL') }}"
-      project_id: "{{ kv('SECRET_PROJECT_ID') }}"
-      private_key: "{{ kv('SECRET_PRIVATE_KEY') }}"
-      client_email: "{{ kv('SECRET_CLIENT_EMAIL') }}"
       github_token: "{{ kv('GITHUB_TOKEN') }}"

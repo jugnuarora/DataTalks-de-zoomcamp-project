@@ -36,21 +36,4 @@ tasks:
     kvType: STRING
     value: france-courses-enrollments
 
-  - id: secret_bucket_url
-    type: io.kestra.plugin.core.kv.Set
-    key: SECRET_BUCKET_URL
-    kvType: STRING
-    value: gs://your-GCS-bucket-name 
 
-  - id: secret_private_key
-    type: io.kestra.plugin.core.kv.Set
-    key: SECRET_PRIVATE_KEY
-    kvType: STRING
-    value: -----BEGIN PRIVATE KEY-----
-
-  - id: secret_client_email
-    type: io.kestra.plugin.core.kv.Set
-    key: SECRET_CLIENT_EMAIL
-    kvType: STRING
-    value: "france-courses-enrollments@france-courses-enrollments.iam.gserviceaccount.com"
-  

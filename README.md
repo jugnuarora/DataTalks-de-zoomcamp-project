@@ -47,15 +47,16 @@ The formacode dataset, in French, requires translation and processing for broade
     * **Formacode Data:** Kestra downloads the Formacode ZIP file, extracts relevant data, translates descriptions and field columns using Spark, and stores the processed data in BigQuery. Broadcast variables in Spark are used for semantic fields translation. This flow will write truncate the file in bigquery which means that it will delete all the old records and insert new. 
 
 2.  **Workflow Orchestration (Kestra):**
-    * A single Kestra workflow is created to orchestrate the courses and enrollments data pipelines, scheduled to run on the first Sunday of each month at 3 AM.
-    * A seperate kestra workflow is created to handle the formacode download, extraction, translation and upload. It is once in a while job as it remains more or less constant. 
+    * A single Kestra workflow is created to orchestrate the courses and enrollments data pipelines, scheduled to run on the first Sunday of each month at 3 AM. Please refer to the [Courses Enrollments Kestra Workflow Topology](/screenshots/Courses%20Enrollments%20Kestra%20Workflow%20Topology.pdf) for the whole flow. 
+    * A seperate kestra workflow is created to handle the formacode download, extraction, translation and upload. It is once in a while job as it remains more or less constant. Please refer to the [Formacode Kestra Workflow Topology](/screenshots/Formacode%20Kestra%20Workflow%20Topology.png) for the whole flow.
 
 3.  **Data Transformation (dbt Cloud):**
     * dbt Cloud is used to build data models for the final fact and dimension tables in BigQuery.
+    * Please refer to the [DBT Lineage Graph](/screenshots/DBT%20Lineage%20Graph.png) to understand the workflow. 
     * A dbt macro is implemented to remove leading numbers from the `field` column in the Formacode data. This macro could be leveraged in future to remove leading digits in `generic_term`.
     * An environment variable `DBT_ENVIRONMENT` is used to control data limiting in the `stg_courses` model (development: limit to 100 rows, production: full dataset). This can be overridden using local variables `limit_data` and further by passing false to the variable in command-bar.
-    * Tests are included in the dbt project to ensure data integrity. There are warnings issued showing that there are few formacodes listed in courses which are not part of formacode dimension file. 
-    * The project includes both development and production environments, with CI/CD job for deployment.
+    * Tests are included in the dbt project to ensure data integrity. There are warnings issued showing that there are few formacodes listed in courses which are not part of formacode dimension file. These can be ignored for now. 
+    * The project includes both development and production environments, with Monthly job creation and CI/CD job for deployment.
 
 4.  **Data Warehouse (BigQuery):**
     * BigQuery is used as the data warehouse, with tables partitioned and clustered for optimal query performance.
@@ -65,7 +66,7 @@ The formacode dataset, in French, requires translation and processing for broade
 
 **Tool:** Google Data Studio
 
-The dashboard includes two tiles:
+The [dashboard](https://lookerstudio.google.com/reporting/71ceb6ee-f472-4892-8e08-6689d9dbd42c) includes two tiles:
 
 1.  **Distribution of Course Categories:** A graph showing the distribution of courses across different Formacode categories, providing insights into the areas with trainings and providers. I have come up with a `KPI` here which is `Trainings Provider Ratio`. It is the ratio od total number of trainings and total number of providers. If 10 providers are providing 150 bootcamps for a technology, then BPR = 150/10 = 15. The interpretation is:
     - LOW: might indicate less demand due to lower number of trainings or overcrowdedness due to high number of providers.
@@ -81,7 +82,6 @@ The dashboard includes two tiles:
 * GCP account with BigQuery and GCS enabled.
 * Kestra instance running.
 * dbt Cloud account with BigQuery connection.
-* Python 3.x with necessary libraries (specified in `requirements.txt`).
 * Service account keys for GCP authentication.
 
 **Steps to Run:**
@@ -93,22 +93,22 @@ The dashboard includes two tiles:
     ```
 2. **Setting up the Cloud:**
 
-    __Step 1:__ Create a project on Google Cloud. The name of the project is `france-courses-enrollments`.
+    __Step 1:__ Create a project on Google Cloud. The name of the project for me is `france-courses-enrollments`. But it can be different.
 
-    __Step 2:__ Create a service account by clicking on IAM. I have kept the service account name as `france-courses-enrollments`.
+    __Step 2:__ Create a service account by clicking on IAM. I have kept the service account name as `france-courses-enrollments`. But it can be different.
     Select roles `Storage Admin`and `BigQuery Admin`.
     Also generate the json key and store it safely for further connection to GCS and bigquery. 
 
     __Step 3:__ Add a billing account to this project.
 
-    __Step 4:__ Create a cloud storage bucket `jugnu-france-course-enrollments`. Select suitable region. I have selected `europe-west1 (Belgium)`. 
+    __Step 4:__ Create a cloud storage bucket. For me it is `jugnu-france-course-enrollments`, but it can be different. Select suitable region. I have selected `europe-west1 (Belgium)`. 
 
 3.  **Configure Kestra:**
     __STEP 1:__ Run `docker compose up`. Access Kestra on `localhost:8080`.
 
     __STEP 2:__ Import the Kestra workflows 
 
-        . 01_gcp_kv.yaml - Execute it and later go to the namespace, select france_courses_enrollments. Go to kv store and make sure that the values are corresponding to your data lake and warehouse setup.
+        . 01_gcp_kv.yaml
 
         . 02_courses_enrollments_pipeline.yaml
 
@@ -126,17 +126,10 @@ The dashboard includes two tiles:
 
         . GCP_LOCATION - I had chosen europe-west1
 
-        . SECRET_CLIENT_EMAIL - Retrieve it from the json file downloaded
-
-        . SECRET_PRIVATE_KEY - Retrieve it from the json file downloaded
-
-        . SECRET_BUCKET_URL - URL for GCS `gs://....`
-
 4.  **Bigquery Set-up:**
     Make sure to have following dataset in bigquery:
         . source_tables
-        . courses
-        . enrollments
+        . external
 
     These are required for the kestra workflow to generate the source tables.
 
@@ -144,41 +137,45 @@ The dashboard includes two tiles:
 
     __Step 1:__ Create a new account `france-market-research`.
 
-    __Step 2:__ Create a new connection to `BigQuery` using the json file generated. Please note that the location of the dataset creation is europe-west1.
+    __Step 2:__ Create a new connection to `BigQuery` using the json file generated. Please note that the location of the dataset creation is europe-west1 (or whatever you have mentioned for the warehouse and data lake set up).
 
-    __Step 3:__ Create a new project and give details of the repository and the project subfolder as `dbt`. Add repository using GitHub. 
+    __Step 3:__ Create a new project and give details of the repository and the [project subdirectory](/screenshots/Project%20Subdirectory.png) as `dbt`. Add repository using GitHub. Project subfolder is a must since the whole dbt resides in the `dbt`folder of the repository. 
 
-    __Step 4:__ Also, create a development environment. Please note that the location of the dataset creation is europe-west1, Connection is Bigquery. The dataset name is 'dbt_models'.
+    __Step 4:__ Create a development environment. Please note that the location of the dataset creation is europe-west1 (or as per your GCP set-up), Connection is Bigquery. The dataset name is 'dbt_models', but it can be different also. 
 
-    __Step 5:__ Create environment variable `DBT_ENVIRONMENT`, where Project default will be `production`and development will be `development`.
+    __Step 5:__ Create [environment variable](/screenshots/DBT%20Environment%20Variable%20setting.png) `DBT_ENVIRONMENT`, where Project default will be `production`and development will be `development`. Later on when we would create production environment, we will add the value for that environment as well. 
 
     __Step 6:__ Now, you can access the contents of the project repository in Develop Cloud IDE. 
 
-    __Step 7:__ In `stg_courses`there is a variable defined `limit_data`, which is true if the environment variable `DBT_ENVIRONMENT`is `development`. To override it in development, `dbt run --vars '{"limit_data": false}'`. Otherwise, be default in development, it will only give 100 rows.
+    __Step 7:__ In `stg_courses`there is a variable defined `limit_data`, which is true if the environment variable `DBT_ENVIRONMENT`is `development`. To override it in development, `dbt run --vars '{"limit_data": false}'`. Otherwise, by default in development, it will only give 100 rows.
 
     __Step 8:__ Set-up the `Production`environment.
 
-    __Step 9:__ Create a new job `Monthly`, which will run in production environment and I have set the Schedule as Cron Schedule for Monthly. See the screenshot.
+    __Step 9:__ Create a new [job](/screenshots/DBT%20Monthly%20Job.png) `Monthly`, which will run in production environment and I have set the Schedule as Cron Schedule for Monthly to be run at 22:00 hrs UTC on 5th of every month. 
 
-    __Step 10:__ Create a new CI/CD job, which will run as soon as there is a merge in the main branch of the git hub repo associated. See the screenshot.
+    __Step 10:__ Create a new CI/CD [job](/screenshots/DBT%20CI%20CD%20Job.png) `deploy_dbt_prod`, which will run as soon as there is a merge in the main branch of the git hub repo associated. See the screenshot.
 
 5.  **Run Kestra Workflows:**
-    * Trigger the Kestra workflow 02_courses_enrollments_pipeline.yaml to start the data ingestion and processing pipelines for courses and enrollments respectively. 
+    * Trigger the Kestra workflow 02_courses_enrollments_pipeline.yaml to start the data ingestion and processing pipelines for courses and enrollments respectively. Execute it to generate the courses source table and enrollments source table.
 
     * Trigger the Kestra workflow 03_formacode_pipeline.yaml to start the data ingestion and processing pipeline for formacode. This will take some time to execute (almost 45-50 mins) because of the translation.
 
 6.  **Verify Data:**
+    * I prefer to reconcile my tables and thus created some local queries for it that can be run in BigQuery. Import the [local_queries.sql](/local_queries.sql).
+    * Execute Query 1, 4 and 10 to see the reconciliation table for courses.
+    * Execute Query 11, 14 and 20 to see the reconciliation table for enrollments.
+    * Execute Query 21 and 27 to see the reconciliation table for formacode. 
     * run the provided sql queries (local_queries) to verify the data. The final tables should have the count as below:
-        . courses - ~195K records
-        . enrollments - ~181K records
-        . formacode - ~3379 records
+        . courses (Query 9) - ~195K records
+        . enrollments (Query 19) - ~181K records
+        . formacode (Query 26)- ~3379 records
 
 7.  **Run dbt Models:**
     * Execute the dbt models in dbt Cloud to transform the data. You can execute in one of the ways listed below:
         - Using dbt command bar and giving:
             `dbt run --vars '{"limit_data": false}'
         
-        - Executing the Monthly job now. The monthly job once finished will generate the docs as well.
+        - Executing the Monthly job now. The monthly job once finished will generate the [docs](/screenshots/DBT%20Documentation%20after%20Monthly%20job.png) as well.
 
 8.  **Visualize in Dashboard:**
     * You can access the visualization [here](https://lookerstudio.google.com/reporting/71ceb6ee-f472-4892-8e08-6689d9dbd42c).
@@ -187,10 +184,31 @@ The dashboard includes two tiles:
 
 * **Tests:** Included dbt tests for data integrity.
 * **CI/CD:** CI/CD pipelines set up for dbt Cloud deployment.
-* **Documentation:** This README provides detailed instructions and explanations.
+* **Documentation:** This README provides detailed instructions and explanations. Even the production jobs (`Monthly`or `deploy_dbt_prod`) once run will produce the [documentation](/screenshots/DBT%20Documentation%20after%20Monthly%20job.png). 
 
 ## Future Improvements
 
 * Use Terraform for Virtualization
 * Explore real-time data ingestion for enrollment data.
 * Optimize the Formacode translation job.
+* Install dependency of DBT Job on the Kestra workflow execution.
+
+## Folders/Root Files Information
+ 
+* `dbt`- This includes the dbt cloud project.
+* `lib`- This contains the jar files required for spark job.
+* `screenshots`- Various screenshots refered in this README are stored in this folder. These are highlighted as you read through the document.
+* `scripts`- All python scripts that are needed in Kestra workflows are stored in this folder.
+    - `01_courses_data_upload.py`- Python script to get courses data through API using dlt and store it in GCS data lake.
+    - `02_enrollments_data_upload.py`- Python script to get enrollments data through API using dlt and store it in GCS data lake.
+    - `03_courses_spark.py`- Python Script to modify column types in courses using spark and store it back in GCS data lake.
+    - `04_enrollments_spark.py`- Python Script to modify column types in enrollments using spark and store it back in GCS data lake.
+    - `05_formacode_download.py`- Python Script to get the selected columns from the selected file in zip folder for formacode.
+    - `06_formacode_sparl_translation.py`- Python Script to execute pyspark for the translation of 2 columns. 
+* `.gitignore` - To ensure that no sensitive information or any kind of data is uploaded to GitHub.
+* `01_gcp_kv.yaml`- KESTRA workflow for Kestra key value set-up
+* `02_courses_enrollments_pipeline.yaml`- KESTRA workflow to get the courses and enrollments data.
+* `03_formacode_pipeline-yaml`- KESTRA workflow to get the formacode data. 
+* `docker-compose.yml`- To run Kestra in docker container. 
+* `local_queries.sql`- SQL queries that can be used to verify the BigQuery tables.
+* `requirements.txt`- Required packages to execute the python scripts. 

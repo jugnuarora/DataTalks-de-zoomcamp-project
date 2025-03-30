@@ -61,8 +61,8 @@ tasks:
             - echo "bucket_url = \"{{ kv('SECRET_BUCKET_URL') }}\"" >> .dlt/secrets.toml
             - echo "[destination.filesystem.credentials]" >> .dlt/secrets.toml
             - echo "project_id = \"{{ kv('GCP_PROJECT_ID') }}\"" >> .dlt/secrets.toml
-            - echo "private_key = \"\"\"{{ kv('SECRET_PRIVATE_KEY') }}\"\"\"" >> .dlt/secrets.toml
-            - echo "client_email = \"{{ kv('SECRET_CLIENT_EMAIL') }}\"" >> .dlt/secrets.toml
+            - echo "private_key = \"\"\"{{ kv('GCP_CREDS')['private_key'] }}\"\"\"" >> .dlt/secrets.toml
+            - echo "client_email = \"{{ kv('GCP_CREDS')['client_email'] }}\"" >> .dlt/secrets.toml
           commands:
             - python 01_courses_data_upload.py --output {{render(vars.gcs_core_folder)}}
 
@@ -135,7 +135,7 @@ tasks:
       - id: bq_courses_ext
         type: io.kestra.plugin.gcp.bigquery.Query
         sql: |
-          CREATE OR REPLACE EXTERNAL TABLE `{{kv('GCP_PROJECT_ID')}}.courses.courses_ext`
+          CREATE OR REPLACE EXTERNAL TABLE `{{kv('GCP_PROJECT_ID')}}.external.courses_ext`
           (
             date_extract DATE OPTIONS (description = 'Dataset upload date. Example: 2025-03-19'),
             nom_of STRING OPTIONS (description = 'company providing the course. Example: AFTRAL'),
@@ -193,7 +193,7 @@ tasks:
       - id: bq_courses_tmp
         type: io.kestra.plugin.gcp.bigquery.Query
         sql: |
-          CREATE OR REPLACE TABLE `{{kv('GCP_PROJECT_ID')}}.courses.courses_latest`
+          CREATE OR REPLACE TABLE `{{kv('GCP_PROJECT_ID')}}.external.courses_latest`
           AS
           SELECT
             MD5(CONCAT(
@@ -203,13 +203,13 @@ tasks:
               COALESCE(CAST(numero_formation AS STRING), "")
             )) AS unique_row_id,
             *
-          FROM `{{kv('GCP_PROJECT_ID')}}.courses.courses_ext`;
+          FROM `{{kv('GCP_PROJECT_ID')}}.external.courses_ext`;
 
       - id: bq_courses_merge
         type: io.kestra.plugin.gcp.bigquery.Query
         sql: |
           MERGE INTO `{{kv('GCP_PROJECT_ID')}}.source_tables.courses` T
-          USING `{{kv('GCP_PROJECT_ID')}}.courses.courses_latest` AS S
+          USING `{{kv('GCP_PROJECT_ID')}}.external.courses_latest` AS S
           ON T.unique_row_id = S.unique_row_id
           WHEN NOT MATCHED THEN
             INSERT (unique_row_id, date_extract, provider, department, region, type_referential, code_rs, code_rncp, certification_title, training_exit_level, code_formacode_1, code_formacode_2, code_formacode_3, code_formacode_4, code_formacode_5, main_formacode_desc, code_rome_1, code_rome_2, code_rome_3, code_rome_4, code_rome_5, nsf_code_1_desc, nsf_code_2_desc, nsf_code_3_desc, nsf_code_1, nsf_code_2, nsf_code_3, code_certification, provider_id, training_id, training_title, strong_points, training_objective, training_content, expected_training_results, trianing_module_count, nb_session_active, nb_remote_session, duration_min, duration_max, duration_mean, fees_min, fees_max, fees_mean, department_code, region_code, nb_hours, coderegion_export)
@@ -252,8 +252,8 @@ tasks:
             - echo "bucket_url = \"{{ kv('SECRET_BUCKET_URL') }}\"" >> .dlt/secrets.toml
             - echo "[destination.filesystem.credentials]" >> .dlt/secrets.toml
             - echo "project_id = \"{{ kv('GCP_PROJECT_ID') }}\"" >> .dlt/secrets.toml
-            - echo "private_key = \"\"\"{{ kv('SECRET_PRIVATE_KEY') }}\"\"\"" >> .dlt/secrets.toml
-            - echo "client_email = \"{{ kv('SECRET_CLIENT_EMAIL') }}\"" >> .dlt/secrets.toml
+            - echo "private_key = \"\"\"{{ kv('GCP_CREDS')['private_key'] }}\"\"\"" >> .dlt/secrets.toml
+            - echo "client_email = \"{{ kv('GCP_CREDS')['client_email'] }}\"" >> .dlt/secrets.toml
           commands:
             - python 02_enrollments_data_upload.py --output {{render(vars.gcs_core_folder)}}
 
@@ -293,7 +293,7 @@ tasks:
       - id: bq_enrollments_ext
         type: io.kestra.plugin.gcp.bigquery.Query
         sql: |
-          CREATE OR REPLACE EXTERNAL TABLE `{{kv('GCP_PROJECT_ID')}}.enrollments.enrollments_ext`
+          CREATE OR REPLACE EXTERNAL TABLE `{{kv('GCP_PROJECT_ID')}}.external.enrollments_ext`
           (
             annee_mois DATE OPTIONS (description = 'year_month of entry or exit. Example: 2024-11'),
             annee INTEGER OPTIONS (description = 'year of entry or exit of trainings. Example: 2024'),
@@ -318,7 +318,7 @@ tasks:
       - id: bq_enrollments_tmp
         type: io.kestra.plugin.gcp.bigquery.Query
         sql: |
-          CREATE OR REPLACE TABLE `{{kv('GCP_PROJECT_ID')}}.enrollments.enrollments_latest`
+          CREATE OR REPLACE TABLE `{{kv('GCP_PROJECT_ID')}}.external.enrollments_latest`
           AS
           SELECT
             MD5(CONCAT(
@@ -331,13 +331,13 @@ tasks:
               COALESCE(CAST(code_rs AS STRING), "")
             )) AS unique_row_id,
             *
-          FROM `{{kv('GCP_PROJECT_ID')}}.enrollments.enrollments_ext`;
+          FROM `{{kv('GCP_PROJECT_ID')}}.external.enrollments_ext`;
 
       - id: bq_enrollments_merge
         type: io.kestra.plugin.gcp.bigquery.Query
         sql: |
           MERGE INTO `{{kv('GCP_PROJECT_ID')}}.source_tables.enrollments` T
-          USING `{{kv('GCP_PROJECT_ID')}}.enrollments.enrollments_latest` AS S
+          USING `{{kv('GCP_PROJECT_ID')}}.external.enrollments_latest` AS S
           ON T.unique_row_id = S.unique_row_id
           WHEN NOT MATCHED THEN
             INSERT (unique_row_id, year_month, year, month, type_referential, code_rncp, code_rs, code_certification, certification_title, provider_id, provider, training_entries, partial_completion_exits, total_completion_exits, load_date)
@@ -351,13 +351,13 @@ tasks:
 triggers:
   - id: courses_trigger
     type: io.kestra.plugin.core.trigger.Schedule
-    cron: "0 23 5 * *" # 0 minutes, 23 hours, 5th day of month, every month, every day of week
+    cron: "00 21 5 * *" # 0 minutes, 23 hours, 5th day of month, every month, every day of week
     inputs:
       courses_or_enrollments: courses
 
   - id: enrollments_trigger
     type: io.kestra.plugin.core.trigger.Schedule
-    cron: "0 23 5 * *" # 0 minutes, 23 hours, 5th day of month, every month, every day of week
+    cron: "00 21 5 * *" # 0 minutes, 23 hours, 5th day of month, every month, every day of week
     inputs:
       courses_or_enrollments: enrollments
 
@@ -369,8 +369,4 @@ pluginDefaults:
       projectId: "{{ kv('GCP_PROJECT_ID') }}"
       location: "{{ kv('GCP_LOCATION') }}"
       bucket: "{{ kv('GCP_BUCKET_NAME') }}"
-      bucket_url: "{{ kv('SECRET_BUCKET_URL') }}"
-      project_id: "{{ kv('SECRET_PROJECT_ID') }}"
-      private_key: "{{ kv('SECRET_PRIVATE_KEY') }}"
-      client_email: "{{ kv('SECRET_CLIENT_EMAIL') }}"
       github_token: "{{ kv('GITHUB_TOKEN') }}"
