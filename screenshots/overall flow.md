@@ -1,4 +1,5 @@
 ```mermaid
+graph LR
 A[Raw Data Sources: Courses, Enrollments, Formacode] --> B(DLT: Data Ingestion & Initial Spark Transformations);
     B --> C[GCS: Transformed Data Lake];
     C --> F{Kestra: Orchestration};
