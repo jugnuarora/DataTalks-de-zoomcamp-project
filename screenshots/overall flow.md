@@ -1,31 +1,22 @@
 ```mermaid
 graph LR
-A[Raw Data Sources: Courses, Enrollments, Formacode] --> B(DLT: Data Ingestion & Initial Spark Transformations);
-    B --> C[GCS: Transformed Data Lake];
-    C --> F{Kestra: Orchestration};
-    F --> G[BigQuery: Source Tables];
-    G --> H(dbt Cloud: Data Modeling);
-    H --> I[BigQuery: Fact & Dimension Tables];
-    I --> J[Looker Studio: Visualizations];
+    A[Raw Data Sources: Courses, Enrollments, Formacode] --> K(Kestra Orchestration);
 
-    subgraph Data Ingestion & Transformation
-        B; C;
+    subgraph Kestra Orchestration
+        B(DLT: Data Ingestion & Initial Spark Transformations) --> C[GCS: Transformed Data Lake];
+        C --> D[Generate Partitioned & Clustered Source Tables in BigQuery];
     end
 
-    subgraph Orchestration & Data Warehouse
-        F; G; H; I;
-    end
-
-    subgraph Visualization
-        J;
-    end
+    K --> D;
+    D --> E(dbt Cloud: Data Modeling);
+    E --> F[BigQuery: Fact & Dimension Tables];
+    F --> G[Looker Studio: Visualizations];
 
     style A fill:#f9f,stroke:#333,stroke-width:2px,color:#000;
     style B fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
     style C fill:#efe,stroke:#333,stroke-width:2px,color:#000;
-    style F fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
-    style G fill:#efe,stroke:#333,stroke-width:2px,color:#000;
-    style H fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
-    style I fill:#efe,stroke:#333,stroke-width:2px,color:#000;
-    style J fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
+    style D fill:#efe,stroke:#333,stroke-width:2px,color:#000;
+    style E fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
+    style F fill:#efe,stroke:#333,stroke-width:2px,color:#000;
+    style G fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
 ```
