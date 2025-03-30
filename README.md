@@ -181,6 +181,7 @@ The [dashboard](https://lookerstudio.google.com/reporting/71ceb6ee-f472-4892-8e0
 
 8.  **Visualize in Dashboard:**
     * You can access the visualization [here](https://lookerstudio.google.com/reporting/71ceb6ee-f472-4892-8e08-6689d9dbd42c).
+    * A screenshot of the visualization after selecting the `formacode_field` as `IT and information systems`and `training_provider_ratio`between 5 and 15 can be found [here](/screenshots/Visualization%20screenshot.png). 
 
 ## Going the Extra Mile (Optional)
 
