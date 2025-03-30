@@ -23,7 +23,7 @@ graph LR
     end
 
     subgraph "Analytics Tools"
-        G --> H[Visualization (Looker)]
+        G --> H[Visualization]
     end
 
     style A fill:#f9f,stroke:#333,stroke-width:2px,color:#000;
