@@ -128,7 +128,9 @@ The [dashboard](https://lookerstudio.google.com/reporting/71ceb6ee-f472-4892-8e0
 
 4.  **Bigquery Set-up:**
     Make sure to have following dataset in bigquery:
+
         . source_tables
+
         . external
 
     These are required for the kestra workflow to generate the source tables.
@@ -156,7 +158,7 @@ The [dashboard](https://lookerstudio.google.com/reporting/71ceb6ee-f472-4892-8e0
     __Step 10:__ Create a new CI/CD [job](/screenshots/DBT%20CI%20CD%20Job.png) `deploy_dbt_prod`, which will run as soon as there is a merge in the main branch of the git hub repo associated. See the screenshot.
 
 5.  **Run Kestra Workflows:**
-    * Trigger the Kestra workflow 02_courses_enrollments_pipeline.yaml to start the data ingestion and processing pipelines for courses and enrollments respectively. Execute it to generate the courses source table and enrollments source table.
+    * Trigger the Kestra workflow 02_courses_enrollments_pipeline.yaml to start the data ingestion and processing pipelines for courses and enrollments respectively. Execute it to generate the courses source table and enrollments source table. The course source table is partitioned by data extract and the code_formacode_1. The enrollments table is partitioned by year_month and clustered by provider.
 
     * Trigger the Kestra workflow 03_formacode_pipeline.yaml to start the data ingestion and processing pipeline for formacode. This will take some time to execute (almost 45-50 mins) because of the translation.
 
