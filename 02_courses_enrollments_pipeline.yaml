@@ -44,8 +44,6 @@ tasks:
         - id: cloneRepository_c
           type: io.kestra.plugin.git.Clone
           url: https://github.com/jugnuarora/france_courses_enrollments.git
-          username: jugnuarora
-          password: "{{ kv('GITHUB_TOKEN') }}"
           branch: main
         
         - id: pythonScript_c
@@ -235,8 +233,6 @@ tasks:
         - id: cloneRepository_e
           type: io.kestra.plugin.git.Clone
           url: https://github.com/jugnuarora/france_courses_enrollments.git
-          username: jugnuarora
-          password: "{{ kv('GITHUB_TOKEN') }}"
           branch: main
         
         - id: pythonScript_e

@@ -107,7 +107,7 @@ graph LR
 
 The [dashboard](https://lookerstudio.google.com/reporting/71ceb6ee-f472-4892-8e08-6689d9dbd42c) includes two tiles:
 
-1.  **Distribution of Course Categories:** A graph showing the distribution of courses across different Formacode categories, providing insights into the areas with trainings and providers. I have come up with a `KPI` here which is `Trainings Provider Ratio`. It is the ratio od total number of trainings and total number of providers. If 10 providers are providing 150 bootcamps for a technology, then BPR = 150/10 = 15. The interpretation is:
+1.  **Distribution of Course Categories:** A graph showing the distribution of courses across different Formacode categories, providing insights into the areas with trainings and providers. I have come up with a `KPI` here which is `Trainings Provider Ratio`. It is the ratio of total number of trainings and total number of providers. If 10 providers are providing 150 bootcamps for a technology, then BPR = 150/10 = 15. The interpretation is:
     - LOW: might indicate less demand due to lower number of trainings or overcrowdedness due to high number of providers.
     - HIGH: might indicate oversaturation due to too many trainings or less competition due to less number of providers. 
     We suggest to look at the TPR between 5 and 15. 
@@ -145,6 +145,7 @@ The [dashboard](https://lookerstudio.google.com/reporting/71ceb6ee-f472-4892-8e0
     __Step 4:__ Create a cloud storage bucket. For me it is `jugnu-france-course-enrollments`, but it can be different. Select suitable region. I have selected `europe-west1 (Belgium)`. 
 
 3.  **Configure Kestra:**
+
     __STEP 1:__ Run `docker compose up`. Access Kestra on `localhost:8080`.
 
     __STEP 2:__ Import the Kestra workflows 
@@ -168,6 +169,7 @@ The [dashboard](https://lookerstudio.google.com/reporting/71ceb6ee-f472-4892-8e0
         . GCP_LOCATION - I had chosen europe-west1
 
 4.  **Bigquery Set-up:**
+
     Make sure to have following dataset in bigquery:
 
         . source_tables

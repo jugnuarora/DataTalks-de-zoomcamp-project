@@ -11,8 +11,6 @@ tasks:
     - id: cloneRepository_c
       type: io.kestra.plugin.git.Clone
       url: https://github.com/jugnuarora/france_courses_enrollments.git
-      username: jugnuarora
-      password: "{{ kv('GITHUB_TOKEN') }}"
       branch: main
 
     - id: download_and_process
