@@ -226,8 +226,8 @@ The [dashboard](https://lookerstudio.google.com/reporting/71ceb6ee-f472-4892-8e0
 
 ## Going the Extra Mile (Optional)
 
-* **Tests:** Included dbt tests for data integrity.
-* **CI/CD:** CI/CD pipelines set up for dbt Cloud deployment.
+* **Tests:** Included dbt [tests](/screenshots/DBT%20Job%20run%20log%20-%20models,%20data%20tests.png) for data integrity.
+* **CI/CD:** CI/CD [pipelines](/screenshots/DBT%20CI%20CD%20Job.png) set up for dbt Cloud deployment.
 * **Documentation:** This README provides detailed instructions and explanations. Even the production jobs (`Monthly`or `deploy_dbt_prod`) once run will produce the [documentation](/screenshots/DBT%20Documentation%20after%20Monthly%20job.png). 
 
 ## Future Improvements
