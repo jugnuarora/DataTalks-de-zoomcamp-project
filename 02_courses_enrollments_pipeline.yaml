@@ -56,7 +56,7 @@ tasks:
             - cd scripts
             - mkdir -p .dlt
             - echo "[destination.filesystem]" > .dlt/secrets.toml
-            - echo "bucket_url = \"{{ kv('SECRET_BUCKET_URL') }}\"" >> .dlt/secrets.toml
+            - echo "bucket_url = \"gs://{{ kv('GCP_BUCKET_NAME') }}\"" >> .dlt/secrets.toml
             - echo "[destination.filesystem.credentials]" >> .dlt/secrets.toml
             - echo "project_id = \"{{ kv('GCP_PROJECT_ID') }}\"" >> .dlt/secrets.toml
             - echo "private_key = \"\"\"{{ kv('GCP_CREDS')['private_key'] }}\"\"\"" >> .dlt/secrets.toml
@@ -245,7 +245,7 @@ tasks:
             - cd scripts
             - mkdir -p .dlt
             - echo "[destination.filesystem]" > .dlt/secrets.toml
-            - echo "bucket_url = \"{{ kv('SECRET_BUCKET_URL') }}\"" >> .dlt/secrets.toml
+            - echo "bucket_url = \"gs://{{ kv('GCP_BUCKET_NAME') }}\"" >> .dlt/secrets.toml
             - echo "[destination.filesystem.credentials]" >> .dlt/secrets.toml
             - echo "project_id = \"{{ kv('GCP_PROJECT_ID') }}\"" >> .dlt/secrets.toml
             - echo "private_key = \"\"\"{{ kv('GCP_CREDS')['private_key'] }}\"\"\"" >> .dlt/secrets.toml
@@ -365,4 +365,3 @@ pluginDefaults:
       projectId: "{{ kv('GCP_PROJECT_ID') }}"
       location: "{{ kv('GCP_LOCATION') }}"
       bucket: "{{ kv('GCP_BUCKET_NAME') }}"
-      github_token: "{{ kv('GITHUB_TOKEN') }}"
