@@ -1,0 +1,47 @@
+id: 04_dbt_execution
+namespace: french-courses-enrollments
+
+tasks:
+  - id: dbt
+    type: io.kestra.plugin.core.flow.WorkingDirectory
+    tasks:
+    - id: clone_repository
+      type: io.kestra.plugin.git.Clone
+      url: https://github.com/jugnuarora/DataTalks-de-zoomcamp-project
+      branch: main
+    # dryRun: true
+    
+    - id: dbt-build
+      type: io.kestra.plugin.dbt.cli.DbtCLI
+      env:
+        DBT_DATABASE: "{{kv('GCP_PROJECT_ID')}}"
+        DBT_ENVIRONMENT: "development"
+      namespaceFiles:
+        enabled: true
+      containerImage: ghcr.io/kestra-io/dbt-bigquery:latest
+      taskRunner:
+        type: io.kestra.plugin.scripts.runner.docker.Docker
+      inputFiles:
+        sa.json: "{{kv('GCP_CREDS')}}"
+      projectDir: dbt
+      commands:
+        - dbt deps --project-dir dbt
+        - 'dbt run --project-dir dbt --vars "{\"limit_data\": false}"'
+      storeManifest:
+        key: manifest.json
+        namespace: "{{ flow.namespace }}"
+      profiles: |
+        default:
+          outputs:
+            dev:
+              type: bigquery
+              dataset: "dbt_models"
+              project: "{{kv('GCP_PROJECT_ID')}}"
+              location: "{{kv('GCP_LOCATION')}}"
+              keyfile: sa.json
+              method: service-account
+              priority: interactive
+              threads: 16
+              timeout_seconds: 300
+              fixed_retries: 1
+          target: dev

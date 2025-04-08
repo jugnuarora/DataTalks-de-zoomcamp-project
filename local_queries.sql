@@ -1,50 +1,50 @@
 
 -------------------------------------------------------------------------COURSES RAW-------------------------------------------------------------------------
-
-CREATE OR REPLACE EXTERNAL TABLE `courses.courses_raw`
+--Query 1:
+CREATE OR REPLACE EXTERNAL TABLE `external.courses_raw`
 OPTIONS (
   format = 'parquet',
-  uris = ['gs://jugnu-france-course-enrollments/courses_enrol_data_2025_03_28/courses_raw_parquet/*.parquet'] -- change the date
+  uris = ['gs://gcp_bucket_name_value/courses_enrol_data_todays_date/courses_raw_parquet/*.parquet'] -- change the date
 );
-
+--Query 2:
 select *
-from `courses.courses_raw`
+from `external.courses_raw`
 limit 10;
-
+--Query 3:
 SELECT
     COLUMN_NAME,
     DATA_TYPE
 FROM
-    courses.INFORMATION_SCHEMA.COLUMNS
+    external.INFORMATION_SCHEMA.COLUMNS
 WHERE
     TABLE_NAME = "courses_raw";
 
 --------------------------------------------------------------------------COURSES FILTERED--------------------------------------------------------------------
-
-CREATE OR REPLACE EXTERNAL TABLE `courses.courses_filtered`
+--Query 4:
+CREATE OR REPLACE EXTERNAL TABLE `external.courses_filtered`
 OPTIONS (
   format = 'parquet',
-  uris = ['gs://jugnu-france-course-enrollments/courses_enrol_data_2025_03_28/courses_filtered/*.parquet'] --change the date
+  uris = ['gs://gcp_bucket_name_value/courses_enrol_data_todays_date/courses_filtered/*.parquet'] --change the date
 );
-
+--Query 5:
 select *
-from `courses.courses_filtered`
+from `external.courses_filtered`
 limit 10;
-
+--Query 6:
 SELECT
     COLUMN_NAME,
     DATA_TYPE
 FROM
-    courses.INFORMATION_SCHEMA.COLUMNS
+    external.INFORMATION_SCHEMA.COLUMNS
 WHERE
     TABLE_NAME = "courses_filtered"; 
 
 ---------------------------------------------------------------------------SOURCE TABLE COURSES-------------------------------------------------------
-
+--Query 7:
 select *
 from `source_tables.courses`
 limit 10;
-
+--Query 8:
 SELECT
     COLUMN_NAME,
     DATA_TYPE
@@ -52,98 +52,102 @@ FROM
     source_tables.INFORMATION_SCHEMA.COLUMNS
 WHERE
     TABLE_NAME = "courses"; 
+--Query 9:
+select count(*)
+from `source_tables.courses`
 
 ------------------------------------------------------------------------------ Table with Courses raw, fileterd and source_tables count reconciliation ---------------------------------------------------------------------------
+--Query 10:
 with courses_raw_cte as
 (
   select 'All' as field,
   count(*) as raw_count
-  from `courses.courses_raw`
+  from `external.courses_raw`
   UNION ALL
   select 'code_formacode_1' as field,
   count(*) as raw_count
-  from `courses.courses_raw`
+  from `external.courses_raw`
   where code_formacode_1 is not null
   UNION ALL
   select 'department' as field,
   count(*) as raw_count
-  from `courses.courses_raw`
+  from `external.courses_raw`
   where nom_departement is not null
   UNION ALL
   select 'code_rs' as field,
   count(*) as raw_count
-  from `courses.courses_raw`
+  from `external.courses_raw`
   where code_inventaire is not null and code_inventaire != 1
   UNION ALL
   select 'code_rncp' as field,
   count(*) as raw_count
-  from `courses.courses_raw`
+  from `external.courses_raw`
   where code_rncp is not null and code_rncp != 1
   UNION ALL
   select 'code_certification' as field,
   count(*) as raw_count
-  from `courses.courses_raw`
+  from `external.courses_raw`
   where code_certifinfo is not null
   UNION ALL
   select 'provider_id' as field,
   count(*) as raw_count
-  from `courses.courses_raw`
+  from `external.courses_raw`
   where siret is not null
   UNION ALL
   select 'certification_title' as field,
   count(*) as raw_count
-  from `courses.courses_raw`
+  from `external.courses_raw`
   where intitule_certification is not null
   UNION ALL
   select 'code_formacode_1_selected' as field,
   count(*) as raw_count
-  from `courses.courses_raw`
+  from `external.courses_raw`
   where code_formacode_1 IN (31023, 31025, 31026)
 ),
 courses_filtered_cte AS
 (
   select 'All' as field,
   count(*) as filtered_count
-  from `courses.courses_filtered`
+  from `external.courses_filtered`
   UNION ALL
   select 'code_formacode_1' as field,
   count(*) as filtered_count
-  from `courses.courses_filtered`
+  from `external.courses_filtered`
   where code_formacode_1 is not null
   UNION ALL
   select 'department' as field,
   count(*) as filtered_count
-  from `courses.courses_filtered`
+  from `external.courses_filtered`
   where nom_departement is not null
   UNION ALL
   select 'code_rs' as field,
   count(*) as filtered_count
-  from `courses.courses_filtered`
+  from `external.courses_filtered`
   where code_inventaire is not null and code_inventaire != 1
   UNION ALL
   select 'code_rncp' as field,
   count(*) as filtered_count
-  from `courses.courses_filtered`
+  from `external.courses_filtered`
   where code_rncp is not null and code_rncp != 1
   UNION ALL
   select 'code_certification' as field,
   count(*) as filtered_count
-  from `courses.courses_filtered`
+  from `external.courses_filtered`
   where code_certifinfo is not null
   UNION ALL
   select 'provider_id' as field,
   count(*) as filtered_count
-  from `courses.courses_filtered`
+  from `external.courses_filtered`
   where siret is not null
   UNION ALL
   select 'certification_title' as field,
   count(*) as filtered_count
-  from `courses.courses_filtered`
+  from `external.courses_filtered`
   where intitule_certification is not null
   UNION ALL
   select 'code_formacode_1_selected' as field,
   count(*) as filtered_count
-  from `courses.courses_filtered`
+  from `external.courses_filtered`
   where code_formacode_1 IN (31023, 31025, 31026)
 ),
 courses_source_cte as
@@ -203,51 +207,51 @@ from
   FULL JOIN courses_source_cte USING (field);
 
 ----------------------------------------------------------------------------ENROLLMENTS RAW------------------------------------------------------------
-
-CREATE OR REPLACE EXTERNAL TABLE `enrollments.enrollments_raw`
+--Query 11:
+CREATE OR REPLACE EXTERNAL TABLE `external.enrollments_raw`
 OPTIONS (
   format = 'parquet',
-  uris = ['gs://jugnu-france-course-enrollments/courses_enrol_data_2025_03_28/enrollments_raw_parquet/*.parquet'] -- change the date
+  uris = ['gs://gcp_bucket_name_value/courses_enrol_data_todays_date/enrollments_raw_parquet/*.parquet'] -- change the date
 );
-
+--Query 12:
 select *
-from `enrollments.enrollments_raw`
+from `external.enrollments_raw`
 limit 10;
-
+--Query 13:
 SELECT
     COLUMN_NAME,
     DATA_TYPE
 FROM
-    enrollments.INFORMATION_SCHEMA.COLUMNS
+    external.INFORMATION_SCHEMA.COLUMNS
 WHERE
     TABLE_NAME = "enrollments_raw";
 
 ----------------------------------------------------------------------------ENROLLMENTS FILTERED------------------------------------------------------
-
-CREATE OR REPLACE EXTERNAL TABLE `enrollments.enrollments_filtered`
+--Query 14:
+CREATE OR REPLACE EXTERNAL TABLE `external.enrollments_filtered`
 OPTIONS (
   format = 'parquet',
-  uris = ['gs://jugnu-france-course-enrollments/courses_enrol_data_2025_03_28/enrollments_filtered/*.parquet'] -- change the date
+  uris = ['gs://gcp_bucket_name_value/courses_enrol_data_todays_date/enrollments_filtered/*.parquet'] -- change the date
 );
-
+--Query 15:
 select *
-from `enrollments.enrollments_filtered`
+from `external.enrollments_filtered`
 limit 10;
-
+--Query 16:
 SELECT
     COLUMN_NAME,
     DATA_TYPE
 FROM
-    enrollments.INFORMATION_SCHEMA.COLUMNS
+    external.INFORMATION_SCHEMA.COLUMNS
 WHERE
     TABLE_NAME = "enrollments_filtered";
 
 ----------------------------------------------------------------------------SOURCE TABLE ENROLLMENTS---------------------------------------------------
-
+--Query 17:
 select *
 from `source_tables.enrollments`
 limit 10;
-
+--Query 18:
 SELECT
     COLUMN_NAME,
     DATA_TYPE
@@ -255,88 +259,92 @@ FROM
     source_tables.INFORMATION_SCHEMA.COLUMNS
 WHERE
     TABLE_NAME = "enrollments";
+--Query 19:
+select count(*)
+from `source_tables.enrollments`
 
 ------------------------------------------------------------------------------ Table with Enrollments raw, fileterd and source_tables count reconciliation ---------------------------------------------------------------------------
+--Query 20:
 with enrollments_raw_cte as
 (
   select 'All' as field,
   count(*) as raw_count
-  from `enrollments.enrollments_raw`
+  from `external.enrollments_raw`
   UNION ALL
   select 'year_month' as field,
   count(*) as raw_count
-  from `enrollments.enrollments_raw`
+  from `external.enrollments_raw`
   where annee_mois is not null
   UNION ALL
   select 'code_rs' as field,
   count(*) as raw_count
-  from `enrollments.enrollments_raw`
+  from `external.enrollments_raw`
   where code_rs is not null and code_rs != -1
   UNION ALL
   select 'code_rncp' as field,
   count(*) as raw_count
-  from `enrollments.enrollments_raw`
+  from `external.enrollments_raw`
   where code_rncp is not null and code_rncp != 1
   UNION ALL
   select 'code_certification' as field,
   count(*) as raw_count
-  from `enrollments.enrollments_raw`
+  from `external.enrollments_raw`
   where code_certifinfo is not null
   UNION ALL
   select 'provider_id' as field,
   count(*) as raw_count
-  from `enrollments.enrollments_raw`
+  from `external.enrollments_raw`
   where siret_of_contractant is not null
   UNION ALL
   select 'certification_title' as field,
   count(*) as raw_count
-  from `enrollments.enrollments_raw`
+  from `external.enrollments_raw`
   where intitule_certification is not null
   UNION ALL
   select 'training_entries' as field,
   count(*) as raw_count
-  from `enrollments.enrollments_raw`
+  from `external.enrollments_raw`
   where entrees_formation != 0
 ),
 enrollments_filtered_cte AS
 (
   select 'All' as field,
   count(*) as filtered_count
-  from `enrollments.enrollments_filtered`
+  from `external.enrollments_filtered`
   UNION ALL
   select 'year_month' as field,
   count(*) as filtered_count
-  from `enrollments.enrollments_filtered`
+  from `external.enrollments_filtered`
   where annee_mois is not null
   UNION ALL
   select 'code_rs' as field,
   count(*) as filtered_count
-  from `enrollments.enrollments_filtered`
+  from `external.enrollments_filtered`
   where code_rs is not null and code_rs != -1
   UNION ALL
   select 'code_rncp' as field,
   count(*) as filtered_count
-  from `enrollments.enrollments_filtered`
+  from `external.enrollments_filtered`
   where code_rncp is not null and code_rncp != 1
   UNION ALL
   select 'code_certification' as field,
   count(*) as filtered_count
-  from `enrollments.enrollments_filtered`
+  from `external.enrollments_filtered`
   where code_certifinfo is not null
   UNION ALL
   select 'provider_id' as field,
   count(*) as filtered_count
-  from `enrollments.enrollments_filtered`
+  from `external.enrollments_filtered`
   where siret_of_contractant is not null
   UNION ALL
   select 'certification_title' as field,
   count(*) as filtered_count
-  from `enrollments.enrollments_filtered`
+  from `external.enrollments_filtered`
   where intitule_certification is not null
   UNION ALL
   select 'training_entries' as field,
   count(*) as filtered_count
-  from `enrollments.enrollments_filtered`
+  from `external.enrollments_filtered`
   where entrees_formation != 0
 ),
 enrollments_source_cte as
@@ -391,18 +399,18 @@ from
   FULL JOIN enrollments_source_cte USING (field);
 
 ----------------------------------------------------------------------------FORMACODE GCS----------------------------------------------------------------
-
-CREATE OR REPLACE EXTERNAL TABLE `courses.formacode_translated`
+--Query 21:
+CREATE OR REPLACE EXTERNAL TABLE `external.formacode_translated`
 OPTIONS (
   format = 'parquet',
-  uris = ['gs://jugnu-france-course-enrollments/formacode_translated/*.parquet']
+  uris = ['gs://gcp_bucket_name_value/formacode_translated/*.parquet']
 );
-
+--Query 22:
 select *
 from `conciliation.formacode_translated`
 --where formacode IN (31023, 31025, 31026)
 limit 10;
-
+--Query 23:
 SELECT
     COLUMN_NAME,
     DATA_TYPE
@@ -412,12 +420,12 @@ WHERE
     TABLE_NAME = "formacode_translated";
 
 ---------------------------------------------------------------------------SOURCE TABLE FORMACODE---------------------------------------------------------------
-
+--Query 24:
 select *
 from `source_tables.formacode`
 --where formacode IN (31023, 31025, 31026)
 limit 10;
-
+--Query 25:
 SELECT
     COLUMN_NAME,
     DATA_TYPE
@@ -425,37 +433,41 @@ FROM
     source_tables.INFORMATION_SCHEMA.COLUMNS
 WHERE
     TABLE_NAME = "formacode";
+--Query 26:
+select count(*)
+from `source_tables.formacode`
 
 ------------------------------------------------------------------------------ Table with Formacode GCS and source_tables count reconciliation ---------------------------------------------------------------------------
+--Query 27:
 with formacode_gcs as
 (
   select 'All' as field,
   count(*) as raw_count
-  from `courses.formacode_translated`
+  from `external.formacode_translated`
   UNION ALL
   select 'description' as field,
   count(*) as raw_count
-  from `courses.formacode_translated`
+  from `external.formacode_translated`
   where formacode is not null
   UNION ALL
   select 'field' as field,
   count(*) as raw_count
-  from `courses.formacode_translated`
+  from `external.formacode_translated`
   where field is not null
   UNION ALL
   select 'generic_term' as field,
   count(*) as raw_count
-  from `courses.formacode_translated`
+  from `external.formacode_translated`
   where generic_term is not null
   UNION ALL
   select 'description_en' as field,
   count(*) as raw_count
-  from `courses.formacode_translated`
+  from `external.formacode_translated`
   where description_en is not null
   UNION ALL
   select 'field_en' as field,
   count(*) as raw_count
-  from `courses.formacode_translated`
+  from `external.formacode_translated`
   where field_en is not null
 ),
 formacode_source_cte as
@@ -603,3 +615,52 @@ select count(*)
 from rn_enrollments
 where rn = 1 #and code_formacode_1 is not null and training_entries != 0
 LIMIT 10;
+
+with child as (
+    select code_formacode_5 as from_field
+    from `france-courses-enrollments`.`dbt_prod_staging`.`stg_courses`
+    where code_formacode_5 is not null
+),
+parent as (
+    select formacode as to_field
+    from `france-courses-enrollments`.`dbt_prod_marts`.`dim_formacode`
+)
+select
+    count(*)
+    --from_field
+from child
+left join parent
+    on child.from_field = parent.to_field
+where parent.to_field is null
+
+
+with child as (
+    select code_formacode_5 as from_field
+    from `france-courses-enrollments`.`dbt_prod_staging`.`stg_courses`
+    where code_formacode_5 is not null
+
+with parent as (
+    select formacode as to_field
+    from `france-courses-enrollments`.`dbt_prod_marts`.`dim_formacode`
+)
+select
+    *
+    --from_field
+from `france-courses-enrollments`.`dbt_prod_staging`.`stg_courses` as child
+left join parent
+    on child.code_formacode_1 = parent.to_field
+where parent.to_field is null
+limit 10;
+
+with parent as (
+    select formacode as to_field
+    from `france-courses-enrollments`.`dbt_prod_marts`.`dim_formacode`
+)
+select
+    *
+    --from_field
+from `france-courses-enrollments`.`dbt_prod_staging`.`stg_enrollments` as child
+left join parent
+    on child.code_formacode_1 = parent.to_field
+where parent.to_field is null
+limit 10;

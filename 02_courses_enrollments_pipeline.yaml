@@ -1,5 +1,5 @@
 id: 02_courses_enrollments_pipeline
-namespace: france-courses-enrollments
+namespace: french-courses-enrollments
 
 inputs:
   - id: courses_or_enrollments
@@ -43,7 +43,7 @@ tasks:
         tasks:
         - id: cloneRepository_c
           type: io.kestra.plugin.git.Clone
-          url: https://github.com/jugnuarora/france_courses_enrollments.git
+          url: https://github.com/jugnuarora/DataTalks-de-zoomcamp-project
           branch: main
         
         - id: pythonScript_c
@@ -232,7 +232,7 @@ tasks:
         tasks:
         - id: cloneRepository_e
           type: io.kestra.plugin.git.Clone
-          url: https://github.com/jugnuarora/france_courses_enrollments.git
+          url: https://github.com/jugnuarora/DataTalks-de-zoomcamp-project
           branch: main
         
         - id: pythonScript_e

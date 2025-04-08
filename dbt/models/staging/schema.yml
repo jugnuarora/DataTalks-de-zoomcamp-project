@@ -3,8 +3,8 @@ version: 2
 sources:
 
   - name: staging
-    database: france-courses-enrollments
-    schema: source_tables
+    database: "{{ env_var('DBT_DATABASE', 'france1-courses-enrollments') }}"
+    schema: "{{ env_var('DBT_SCHEMA', 'source_tables') }}"
 
     tables:
       - name: courses

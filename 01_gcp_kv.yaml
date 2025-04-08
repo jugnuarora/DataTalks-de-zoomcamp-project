@@ -1,5 +1,5 @@
 id: 01_gcp_kv
-namespace: france-courses-enrollments
+namespace: french-courses-enrollments
 
 tasks:
   - id: gcp_creds
@@ -16,24 +16,16 @@ tasks:
     type: io.kestra.plugin.core.kv.Set
     key: GCP_PROJECT_ID
     kvType: STRING
-    value: france-courses-enrollments
+    value: gcp_project_id_value
 
   - id: gcp_location
     type: io.kestra.plugin.core.kv.Set
     key: GCP_LOCATION
     kvType: STRING
-    value: europe-west1
+    value: gcp_location_value
 
   - id: gcp_bucket_name
     type: io.kestra.plugin.core.kv.Set
     key: GCP_BUCKET_NAME
     kvType: STRING
-    value: your-GCS-bucket-name
-
-  - id: gcp_dataset
-    type: io.kestra.plugin.core.kv.Set
-    key: GCP_DATASET
-    kvType: STRING
-    value: france-courses-enrollments
-
-
+    value: gcp_bucket_name_value
