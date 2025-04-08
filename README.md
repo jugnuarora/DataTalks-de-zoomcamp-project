@@ -71,6 +71,15 @@ graph LR
         G --> H[Visualization]
     end
 
+    subgraph "Infrastructure as Code"
+        I[Terraform: Infrastructure Provisioning]
+        I --> D
+        I --> E
+        I --> F
+        I --> G
+        I --> H
+    end
+
     style A fill:#f9f,stroke:#333,stroke-width:2px,color:#000;
     style B fill:#f9f,stroke:#333,stroke-width:2px,color:#000;
     style C fill:#f9f,stroke:#333,stroke-width:2px,color:#000;
