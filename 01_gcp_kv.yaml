@@ -1,5 +1,5 @@
 id: 01_gcp_kv
-namespace: french-courses-enrollments
+namespace: france-courses-enrollments
 
 tasks:
   - id: gcp_creds

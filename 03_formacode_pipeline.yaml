@@ -1,5 +1,5 @@
 id: 03_formacode_pipeline
-namespace: french-courses-enrollments
+namespace: france-courses-enrollments
 
 variables:
   gcs_formacode_translated: "gs://{{kv('GCP_BUCKET_NAME')}}/formacode_translated"

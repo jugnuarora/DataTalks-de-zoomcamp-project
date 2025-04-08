@@ -1,5 +1,5 @@
 id: 02_courses_enrollments_pipeline
-namespace: french-courses-enrollments
+namespace: france-courses-enrollments
 
 inputs:
   - id: courses_or_enrollments

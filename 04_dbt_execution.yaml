@@ -1,5 +1,5 @@
 id: 04_dbt_execution
-namespace: french-courses-enrollments
+namespace: france-courses-enrollments
 
 tasks:
   - id: dbt
