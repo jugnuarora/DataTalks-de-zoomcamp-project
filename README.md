@@ -14,7 +14,7 @@ This project focuses on building an end-to-end data pipeline to analyze training
     - 31028: Artificial Intelligence
     - 31035: Data Visualization
 
-    Other than this there is a column `field`which contains 65 semantic field that helps in grouping the formacodes at higher level. For example, all the above would be part of ÌT and information systems. Other Example wold be Financial Management account. 
+    Other than this there is a column `field`which contains 65 semantic field that helps in grouping the formacodes at higher level. For example, all the above would be part of ÌT and information systems. Other Example would be Financial Management account. 
 
 **Problem Statement:**
 
@@ -37,7 +37,8 @@ The formacode dataset, in French, requires translation and processing for broade
 * **Workflow Orchestration:** Kestra
 * **Data Lake:** Google Cloud Storage (GCS)
 * **Data Warehouse:** BigQuery
-* **Batch Processing:** Apache Spark (Databricks Delta Live Tables(DLT))
+* **Data Ingestion:** DLT Hub using python
+* **Batch Processing:** Apache Spark
 * **Data Transformation:** dbt Cloud
 * **Data Transformation:** Looker
 
@@ -119,6 +120,38 @@ The [dashboard](https://lookerstudio.google.com/reporting/71ceb6ee-f472-4892-8e0
 * A screenshot of the visualization after selecting the `formacode_field` as `IT and information systems`and `training_provider_ratio`between 5 and 15 can be found [here](/screenshots/Visualization%20screenshot.png). 
 
 ## Reproducibility
+
+### Automation (If you prefer manual, please scroll down.)
+
+**Prerequisites:**
+
+* GCP project with billing enabled. Rest of the tasks like service account creation, IAM roles assignment, bucket creation, dataset creation, kestra dockerization will be executed by the bash script & resources will be applied and killed using terraform in the bash script.
+* Docker Desktop
+
+**Steps to Run:**
+
+1. **Clone the Repository:**
+    ```bash
+    git clone git@github.com:jugnuarora/france_courses_enrollments.git
+    cd france_courses_enrollments
+    ```
+
+2. **In the terminal, execute `./setup.sh` and follow the instructions**
+
+3. **Verify Data:**
+    * I prefer to reconcile my tables and thus created some local queries for it that can be run in BigQuery. Import the (/new_local_queries.sql) that would be generated on the run based on your created project id.
+    * Execute Query 1, 4 and 10 to see the reconciliation table for courses.
+    * Execute Query 11, 14 and 20 to see the reconciliation table for enrollments.
+    * Execute Query 21 and 27 to see the reconciliation table for formacode. 
+    * run the provided sql queries (local_queries) to verify the data. The final tables should have the count as below:
+        . courses (Query 9) - ~195K records
+        . enrollments (Query 19) - ~181K records
+        . formacode (Query 26)- ~3379 records
+
+4. **Visualize in Dashboard:**
+    * You can access the visualization [here](https://lookerstudio.google.com/reporting/71ceb6ee-f472-4892-8e08-6689d9dbd42c).
+
+### Manual
 
 **Prerequisites:**
 
