@@ -18,8 +18,6 @@ cd "$SCRIPT_DIR" || exit
 
 GCP_LOCATION=europe-west1
 
-#echo "✅ .env file created successfully."
-
 # Create secrets folder
 mkdir -p secrets
 rm -f secrets/gcp_credentials.json
@@ -214,31 +212,44 @@ echo "🔹 Starting Docker services... THIS WILL TAKE SOMETIME!"
 docker-compose build --no-cache
 docker-compose up -d
 
-
 # 9️⃣ Wait for Kestra
 echo "⏳ Waiting for Kestra to initialize..."
 sleep 120  
 
 # 🔟 Kestra workflow import.
+
 echo "🔹 Importing Kestra workflows..."
 curl -X POST http://localhost:8080/api/v1/flows/import -F fileUpload=@new_01_gcp_kv.yaml
 curl -X POST http://localhost:8080/api/v1/flows/import -F fileUpload=@02_courses_enrollments_pipeline.yaml
 curl -X POST http://localhost:8080/api/v1/flows/import -F fileUpload=@03_formacode_pipeline.yaml
 curl -X POST http://localhost:8080/api/v1/flows/import -F fileUpload=@04_dbt_execution.yaml
 
+echo "🔹 Importing Kestra GCP_CREDS..."
+
+# Create Kestra KV entry
+GCP_CREDENTIALS_PATH="./secrets/gcp_credentials.json"
+GCP_CREDENTIALS=$(cat "$GCP_CREDENTIALS_PATH")
+
+curl -X PUT \
+  -H "Content-Type: application/json" \
+  -d "$GCP_CREDENTIALS" \
+  http://localhost:8080/api/v1/namespaces/french-courses-enrollments/kv/GCP_CREDS
+
+if [ $? -ne 0 ]; then
+  echo "❌ Failed to create Kestra KV entry using curl."
+  exit 1
+fi
+
 # Display URLs
 echo "✅ Setup Complete!"
 echo "📊 Visit Kestra: http://localhost:8080 and the namespace is france-courses-enrollments. Go to Flows."
 read -p "📊 Execute 01_gcp_kv in Kestra and press enter once done..."
-echo "📊 Update GCP_CREDS in KV Store of the same namespace. Your key would have been downloaded in secrets folder of this repo. You can copy paste the contents from it."
-read -p "Press enter once done..."
 read -p "📊 This can be done simultaneously:
     a) Execute 02_courses_enrollments_pipeline with input as courses. 
     b) Execute 02_courses_enrollments_pipeline with input as enrollments. 
     c) Execute 03_formacode_pipeline. It will take ~45-50 mins
     and press enter once done..."
-read -p "📊 Verify source_tables in bigquery. It should have courses, enrollments, formacode. You can copy the queries from new_local_queries.sql to local queries in bigquery and run the reconciliation steps mentioned in manual set-up of README. Press enter once done..."
-echo "📊 Execute 04_dbt_execution"
+read -p "📊 Verify source_tables in bigquery. It should have courses, enrollments, formacode. You can copy the queries from new_local_queries.sql to local queries in bigquery and run the reconciliation steps mentioned in set-up of README. Press enter once done..."
 read -p "Execute 04_dbt_execution and press enter once done..."
 echo "📊 You are ready to visualize."
 
@@ -257,7 +268,7 @@ echo "✅ new_local_queries.sql deleted."
 
 #Docker compose down
 echo "🔹 Stoping Docker services... THIS WILL TAKE SOMETIME!"
-docker-compose down
+docker-compose down --rmi all
 
 # Destroy Terraform Resources
 echo "🔹 Destroying Terraform resources..."

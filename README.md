@@ -1,5 +1,3 @@
-**If you are reviewing the commit ID 428a076, please refer to the issue opened for it.** 
-
 ## Project Overview
 
 This project focuses on building an end-to-end data pipeline to analyze training course and enrollment data within the French market. The goal is to track course trends over time, understand enrollment patterns, and provide actionable insights through a dashboard.
@@ -44,48 +42,52 @@ The formacode dataset, in French, requires translation and processing for broade
 
 **High Level Architecture**
 
-### Manual
-
 ```mermaid
 graph LR
     subgraph "Data Sources (EL)"
-        A[Courses]
-        B[Enrollments]
-        C[Formacode]
+        C[Courses]
+        E[Enrollments]
+        F[Formacode]
     end
 
-    subgraph "Data Ingestion & Initial Transformation"
-        subgraph "Kestra & GCS"
-            A --> D(DLT: Raw Data)
-            B --> D
-            C --> D
-            D --> E[Spark: Initial Transformed Data]
+    subgraph "Bash Script for complete automation"
+        B[Bash Script: GCP Key creation & IAM Roles + Terraform Deployment + Kestra Dockerization & Dynamic Flows Import + Terraform Destroy]
+    
+        subgraph "Terraform"
+            T[Terraform: Infrastructure as Code]
         end
-    end
 
-    subgraph "Data Transformation"
-        subgraph "BigQuery"
-            E --> F[Partitioned & Clustered source_tables]
-            F --> G(dbt: Facts & Dimensions)
+        subgraph "Kestra Orchestration"
+            subgraph "GCS"
+                T --> GCS_Resources
+                C --> D(DLT: Raw Data)
+                E --> D
+                F --> D
+                D --> S[Spark: Initial Transformed Data]
+            end
+
+            subgraph "BigQuery"
+                T --> BQ_Resources
+                S --> P[Partitioned & Clustered source_tables]
+                P --> DBT(dbt: Facts & Dimensions)
+            end
         end
     end
 
     subgraph "Analytics Tools"
-        G --> H[Visualization]
+        DBT --> H[Visualization]
     end
 
-    style A fill:#f9f,stroke:#333,stroke-width:2px,color:#000;
-    style B fill:#f9f,stroke:#333,stroke-width:2px,color:#000;
-    style C fill:#f9f,stroke:#333,stroke-width:2px,color:#000;
+    style T fill:#add8e6,stroke:#333,stroke-width:2px,color:#000;
     style D fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
-    style E fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
-    style F fill:#efe,stroke:#333,stroke-width:2px,color:#000;
-    style G fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
+    style S fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
+    style P fill:#efe,stroke:#333,stroke-width:2px,color:#000;
+    style DBT fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
     style H fill:#ccf,stroke:#333,stroke-width:2px,color:#000;
+    style GCS_Resources fill:#e0ffff,stroke:#333,stroke-width:1px,color:#000;
+    style BQ_Resources fill:#e0ffff,stroke:#333,stroke-width:1px,color:#000;
 ```
-### Automation using Terraform and Bash Script
-
-
+        
 **Pipeline Components:**
 
 1.  **Data Ingestion (Batch):**
@@ -126,12 +128,25 @@ The [dashboard](https://lookerstudio.google.com/reporting/71ceb6ee-f472-4892-8e0
 
 ## Reproducibility
 
-### Automation (If you prefer manual, please scroll down.)
+### Automation (Recommended)
+
+This section outlines the automated setup using a Bash script, Terraform, and Kestra. If you prefer manual setup, please scroll down.
 
 **Prerequisites:**
 
-* GCP project with billing enabled. Rest of the tasks like service account creation, IAM roles assignment, bucket creation, dataset creation, kestra dockerization will be executed by the bash script & resources will be applied and killed using terraform in the bash script.
-* Docker Desktop
+* Google Cloud Platform (GCP) Account:
+    - A GCP project with billing enabled. The script will handle service account creation, IAM role assignments, and resource provisioning.
+
+* Docker Desktop:
+    - Docker Desktop installed and running. This is required for Kestra's containerized setup.
+
+* Google Cloud SDK (gcloud CLI):
+    - Install the Google Cloud SDK, which includes the `gcloud` command-line tool.
+    - Follow the installation instructions for your operating system: https://cloud.google.com/sdk/docs/install
+    - After installation, initialize the gcloud CLI by running:
+        ```bash
+        gcloud init
+        ```
 
 **Steps to Run:**
 
@@ -141,19 +156,32 @@ The [dashboard](https://lookerstudio.google.com/reporting/71ceb6ee-f472-4892-8e0
     cd france_courses_enrollments
     ```
 
-2. **In the terminal, execute `./setup.sh` and follow the instructions**
+2. **Execute the Setup Script:**
+    - In your terminal, run the setup script:
+        ```bash
+        ./setup.sh
+        ```
+    - Follow the on-screen instructions. The script will
+        - Authenticate with GCP.
+        - Create necessary service accounts and assign IAM roles.
+        - Deploy infrastructure using Terraform (GCS buckets, BigQuery datasets).
+        - Start Kestra using Docker.
+        - Import Kestra workflows.
+        - Then at the end of the script it will destroy all the terraform resources.
 
-3. **Verify Data:**
-    * I prefer to reconcile my tables and thus created some local queries for it that can be run in BigQuery. Import the (/new_local_queries.sql) that would be generated on the run based on your created project id.
-    * Execute Query 1, 4 and 10 to see the reconciliation table for courses.
-    * Execute Query 11, 14 and 20 to see the reconciliation table for enrollments.
-    * Execute Query 21 and 27 to see the reconciliation table for formacode. 
-    * run the provided sql queries (local_queries) to verify the data. The final tables should have the count as below:
-        . courses (Query 9) - ~195K records
-        . enrollments (Query 19) - ~181K records
-        . formacode (Query 26)- ~3379 records
+3. **Verify Data in BigQuery:**
+    This step is for reconciliation. 
+    * The setup script will generate a new_local_queries.sql file. Import this file into the BigQuery console.
+    * Execute the following queries for reconciliation:
+        - Courses: Queries 1, 4, and 10.
+        - Enrollments: Queries 11, 14, and 20.
+        - Formacode: Queries 21 and 27.
+    * Verify the final table counts:
+        - Courses (Query 9): ~195K records
+        - Enrollments (Query 19): ~181K records
+        - Formacode (Query 26): ~3379 records
 
-4. **Visualize in Dashboard:**
+4. **Visualize in Looker Studio:**
     * You can access the visualization [here](https://lookerstudio.google.com/reporting/71ceb6ee-f472-4892-8e08-6689d9dbd42c).
 
 ### Manual
