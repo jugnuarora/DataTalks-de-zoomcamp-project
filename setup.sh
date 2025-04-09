@@ -233,7 +233,7 @@ GCP_CREDENTIALS=$(cat "$GCP_CREDENTIALS_PATH")
 curl -X PUT \
   -H "Content-Type: application/json" \
   -d "$GCP_CREDENTIALS" \
-  http://localhost:8080/api/v1/namespaces/french-courses-enrollments/kv/GCP_CREDS
+  http://localhost:8080/api/v1/namespaces/france-courses-enrollments/kv/GCP_CREDS
 
 if [ $? -ne 0 ]; then
   echo "❌ Failed to create Kestra KV entry using curl."

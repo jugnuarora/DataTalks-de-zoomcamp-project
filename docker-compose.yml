@@ -64,7 +64,7 @@ services:
 volumes:
   vol-kestra-metadata:
     #name: vol-kestra-metadata
-    Driver: local
+    driver: local
   vol-kestra-data:
     #name: vol-kestra-data
-    Driver: local
+    driver: local
