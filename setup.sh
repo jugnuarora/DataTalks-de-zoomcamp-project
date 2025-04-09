@@ -250,11 +250,23 @@ read -p "📊 This can be done simultaneously:
     c) Execute 03_formacode_pipeline. It will take ~45-50 mins
     and press enter once done..."
 read -p "📊 Verify source_tables in bigquery. It should have courses, enrollments, formacode. You can copy the queries from new_local_queries.sql to local queries in bigquery and run the reconciliation steps mentioned in set-up of README. Press enter once done..."
-read -p "Execute 04_dbt_execution and press enter once done..."
+read -p "📊 Execute 04_dbt_execution and press enter once done..."
 echo "📊 You are ready to visualize."
 
 # Prompt for Terraform Destroy
 read -p "Press Enter to destroy the GCS bucket and BigQuery datasets (or Ctrl+C to skip)..."
+
+# Delete DBT Datasets
+echo "🔹 Deleting DBT datasets..."
+bq rm -r -f "$GCP_PROJECT_ID:dbt_models_marts"
+bq rm -r -f "$GCP_PROJECT_ID:dbt_models_staging"
+bq rm -r -f "$GCP_PROJECT_ID:dbt_models_prep"
+
+if [ $? -ne 0 ]; then
+    echo "❌ Failed to delete DBT datasets."
+else
+    echo "✅ DBT datasets deleted successfully."
+fi
 
 # Delete the new_01_gcp_kv.yaml file
 echo "🔹 Deleting the new_01_gcp_kv.yaml file..."
