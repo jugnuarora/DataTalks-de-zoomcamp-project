@@ -99,7 +99,7 @@ graph LR
     * A single Kestra workflow is created to orchestrate the courses and enrollments data pipelines, scheduled to run on the first Sunday of each month at 3 AM. Please refer to the [Courses Enrollments Kestra Workflow Topology](/screenshots/Courses%20Enrollments%20Kestra%20Workflow%20Topology.pdf) for the whole flow. 
     * A seperate kestra workflow is created to handle the formacode download, extraction, translation and upload. It is once in a while job as it remains more or less constant. Please refer to the [Formacode Kestra Workflow Topology](/screenshots/Formacode%20Kestra%20Workflow%20Topology.png) for the whole flow.
     * The flows are also inter-dependent and set to trigger the next flow. There are 2 possible cases:
-        - Bash script will trigger the start-to-end flow creating the dbt marts and fact tables.
+        - Bash script will trigger the start-to-end flow creating the dbt marts and fact tables. Please refer to the [dependency graph](/screenshots/Kestra%20Flows%20Dependency%20Graph.png).
         - 02_courses_enrollments_pipeline has a time trigger set-up as well which will in-turn trigger the 04_dbt_execution once complete. 
 
 3.  **Data Transformation (dbt Cloud):**
