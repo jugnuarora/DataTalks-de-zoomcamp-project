@@ -366,7 +366,7 @@ triggers:
       flows:
         - namespace: france-courses-enrollments
           flowId: 03_formacode_pipeline
-          states: [SUCCESS]
+          states: [SUCCESS, WARNING]
 
   - id: gcp_kv_trigger_2
     type: io.kestra.plugin.core.trigger.Flow
@@ -377,7 +377,7 @@ triggers:
       flows:
         - namespace: france-courses-enrollments
           flowId: 03_formacode_pipeline
-          states: [SUCCESS]
+          states: [SUCCESS, WARNING]
 
 
 pluginDefaults:

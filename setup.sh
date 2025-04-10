@@ -238,17 +238,16 @@ echo "🔹 Triggering the first execution of 01_gcp_kv..."
 curl -X POST \
 http://localhost:8080/api/v1/executions/france-courses-enrollments/01_gcp_kv
 
-# Display URLs
-echo "✅ Setup Complete!"
-echo "📊 Visit Kestra: http://localhost:8080 and the namespace is france-courses-enrollments. Go to Flows."
-read -p "📊 Execute 01_gcp_kv in Kestra and press enter once done..."
-read -p "📊 This can be done simultaneously:
-    a) Execute 02_courses_enrollments_pipeline with input as courses. 
-    b) Execute 02_courses_enrollments_pipeline with input as enrollments. 
-    c) Execute 03_formacode_pipeline. It will take ~45-50 mins
-    and press enter once done..."
+
+echo "📊 Visit Kestra: http://localhost:8080 and the namespace is france-courses-enrollments to monitor the execution. The 03_formacode_pipeline will take ~45-50 mins."
+read -p "📊 Press enter once you verify that following executions are complete:
+    a) 01_gcp_kv
+    b) 02_courses_enrollments_pipeline
+    c) 03_formacode_pipeline
+    d) 04_dbt_execution"
+
 read -p "📊 Verify source_tables in bigquery. It should have courses, enrollments, formacode. You can copy the queries from new_local_queries.sql to local queries in bigquery and run the reconciliation steps mentioned in set-up of README. Press enter once done..."
-read -p "📊 Execute 04_dbt_execution and press enter once done..."
+
 echo "📊 You are ready to visualize."
 
 # Prompt for Terraform Destroy
