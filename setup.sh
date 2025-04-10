@@ -213,8 +213,8 @@ sleep 120
 
 echo "🔹 Importing Kestra workflows..."
 curl -X POST http://localhost:8080/api/v1/flows/import -F fileUpload=@new_01_gcp_kv.yaml
-curl -X POST http://localhost:8080/api/v1/flows/import -F fileUpload=@02_courses_enrollments_pipeline.yaml
-curl -X POST http://localhost:8080/api/v1/flows/import -F fileUpload=@03_formacode_pipeline.yaml
+curl -X POST http://localhost:8080/api/v1/flows/import -F fileUpload=@02_formacode_pipeline.yaml
+curl -X POST http://localhost:8080/api/v1/flows/import -F fileUpload=@03_courses_enrollments_pipeline.yaml
 curl -X POST http://localhost:8080/api/v1/flows/import -F fileUpload=@04_dbt_execution.yaml
 
 echo "🔹 Importing Kestra GCP_CREDS..."
@@ -239,11 +239,11 @@ curl -X POST \
 http://localhost:8080/api/v1/executions/france-courses-enrollments/01_gcp_kv
 
 
-echo "📊 Visit Kestra: http://localhost:8080 and the namespace is france-courses-enrollments to monitor the execution. The 03_formacode_pipeline will take ~45-50 mins."
+echo "📊 Visit Kestra: http://localhost:8080 and the namespace is france-courses-enrollments to monitor the execution. The 02_formacode_pipeline will take ~45-50 mins."
 read -p "📊 Press enter once you verify that following executions are complete:
     a) 01_gcp_kv
-    b) 02_courses_enrollments_pipeline
-    c) 03_formacode_pipeline
+    b) 02_formacode_pipeline
+    c) 03_courses_enrollments_pipeline
     d) 04_dbt_execution"
 
 read -p "📊 Verify source_tables in bigquery. It should have courses, enrollments, formacode. You can copy the queries from new_local_queries.sql to local queries in bigquery and run the reconciliation steps mentioned in set-up of README. Press enter once done..."

@@ -1,4 +1,4 @@
-id: 02_courses_enrollments_pipeline
+id: 03_courses_enrollments_pipeline
 namespace: france-courses-enrollments
 
 inputs:
@@ -365,7 +365,7 @@ triggers:
       id: flow_trigger
       flows:
         - namespace: france-courses-enrollments
-          flowId: 03_formacode_pipeline
+          flowId: 02_formacode_pipeline
           states: [SUCCESS, WARNING]
 
   - id: gcp_kv_trigger_2
@@ -376,7 +376,7 @@ triggers:
       id: flow_trigger
       flows:
         - namespace: france-courses-enrollments
-          flowId: 03_formacode_pipeline
+          flowId: 02_formacode_pipeline
           states: [SUCCESS, WARNING]
 
 

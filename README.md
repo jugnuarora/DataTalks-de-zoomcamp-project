@@ -224,9 +224,11 @@ This section outlines the automated setup using a Bash script, Terraform, and Ke
 
         . 01_gcp_kv.yaml
 
-        . 02_courses_enrollments_pipeline.yaml
+        . 02_formacode_pipeline.yaml
 
-        . 03_formacode_pipeline.yaml
+        . 03_courses_enrollments_pipeline.yaml
+
+        . 04_dbt_execution.yaml
 
     __STEP 3:__ Execute `01_gcp_kv.yaml` to set up the key value pair. Later on you can modify them with the values that corresponds to your set-up by going to namespaces, selecting `france-courses-enrollments` and then selecting `KV Store`. You will need following key value pairs:
 
@@ -273,9 +275,9 @@ This section outlines the automated setup using a Bash script, Terraform, and Ke
     __Step 10:__ Create a new CI/CD [job](/screenshots/DBT%20CI%20CD%20Job.png) `deploy_dbt_prod`, which will run as soon as there is a merge in the main branch of the git hub repo associated. See the screenshot.
 
 5.  **Run Kestra Workflows:**
-    * Trigger the Kestra workflow 02_courses_enrollments_pipeline.yaml to start the data ingestion and processing pipelines for courses and enrollments respectively. Execute it to generate the courses source table and enrollments source table. The course source table is partitioned by data extract and the code_formacode_1. The enrollments table is partitioned by year_month and clustered by provider.
+    * Trigger the Kestra workflow 02_formacode_pipeline.yaml to start the data ingestion and processing pipeline for formacode. This will take some time to execute (almost 45-50 mins) because of the translation.
 
-    * Trigger the Kestra workflow 03_formacode_pipeline.yaml to start the data ingestion and processing pipeline for formacode. This will take some time to execute (almost 45-50 mins) because of the translation.
+    * Trigger the Kestra workflow 03_courses_enrollments_pipeline.yaml to start the data ingestion and processing pipelines for courses and enrollments respectively. Execute it to generate the courses source table and enrollments source table. The course source table is partitioned by data extract and the code_formacode_1. The enrollments table is partitioned by year_month and clustered by provider.
 
 6.  **Verify Data:**
     * I prefer to reconcile my tables and thus created some local queries for it that can be run in BigQuery. Import the [local_queries.sql](/local_queries.sql).

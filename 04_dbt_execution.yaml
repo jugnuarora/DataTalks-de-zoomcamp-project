@@ -53,10 +53,10 @@ triggers:
       id: flows
       flows:
         - namespace: france-courses-enrollments
-          flowId: 02_courses_enrollments_pipeline
+          flowId: 03_courses_enrollments_pipeline
           states: [SUCCESS]
           labels: {c/e: courses}
         - namespace: france-courses-enrollments
-          flowId: 02_courses_enrollments_pipeline
+          flowId: 03_courses_enrollments_pipeline
           states: [SUCCESS]
           labels: {c/e: enrollments}
