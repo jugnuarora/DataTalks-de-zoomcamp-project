@@ -65,3 +65,13 @@ pluginDefaults:
       projectId: "{{ kv('GCP_PROJECT_ID') }}"
       location: "{{ kv('GCP_LOCATION') }}"
       bucket: "{{ kv('GCP_BUCKET_NAME') }}"
+
+triggers:
+  - id: gcp_kv_trigger
+    type: io.kestra.plugin.core.trigger.Flow
+    preconditions:
+      id: flow_trigger
+      flows:
+        - namespace: france-courses-enrollments
+          flowId: 01_gcp_kv
+          states: [SUCCESS]

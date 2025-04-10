@@ -187,13 +187,6 @@ GCP_CREDS_JSON=$(terraform output -json GCP_CREDS | jq -r tostring)
 
 cd ..
 
-# Echo the variables before sed commands
-echo "GCP_CREDS_JSON: $GCP_CREDS_JSON"
-echo "GCP_PROJECT_ID: $GCP_PROJECT_ID"
-echo "GCP_LOCATION: $GCP_LOCATION"
-echo "GCP_BUCKET_NAME: $GCP_BUCKET_NAME"
-echo "GCP_DATASET: $BIGQUERY_SOURCE_DATASET"
-
 # Replace Placeholders in 01_gcp_kv.yaml
 echo "🔹 Replacing placeholders in 01_gcp_kv.yaml..."
 # Use Perl and sed commands to replace placeholders and save to a new file
@@ -239,6 +232,11 @@ if [ $? -ne 0 ]; then
   echo "❌ Failed to create Kestra KV entry using curl."
   exit 1
 fi
+
+echo "✅ Setup Complete!"
+echo "🔹 Triggering the first execution of 01_gcp_kv..."
+curl -X POST \
+http://localhost:8080/api/v1/executions/france-courses-enrollments/01_gcp_kv
 
 # Display URLs
 echo "✅ Setup Complete!"

@@ -357,6 +357,28 @@ triggers:
     inputs:
       courses_or_enrollments: enrollments
 
+  - id: gcp_kv_trigger_1
+    type: io.kestra.plugin.core.trigger.Flow
+    inputs:
+      courses_or_enrollments: courses
+    preconditions:
+      id: flow_trigger
+      flows:
+        - namespace: france-courses-enrollments
+          flowId: 03_formacode_pipeline
+          states: [SUCCESS]
+
+  - id: gcp_kv_trigger_2
+    type: io.kestra.plugin.core.trigger.Flow
+    inputs:
+      courses_or_enrollments: enrollments
+    preconditions:
+      id: flow_trigger
+      flows:
+        - namespace: france-courses-enrollments
+          flowId: 03_formacode_pipeline
+          states: [SUCCESS]
+
 
 pluginDefaults:
   - type: io.kestra.plugin.gcp

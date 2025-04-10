@@ -45,3 +45,18 @@ tasks:
               timeout_seconds: 300
               fixed_retries: 1
           target: dev
+
+triggers:
+  - id: flow_trigger_1
+    type: io.kestra.plugin.core.trigger.Flow
+    preconditions:
+      id: flows
+      flows:
+        - namespace: france-courses-enrollments
+          flowId: 02_courses_enrollments_pipeline
+          states: [SUCCESS]
+          labels: {c/e: courses}
+        - namespace: france-courses-enrollments
+          flowId: 02_courses_enrollments_pipeline
+          states: [SUCCESS]
+          labels: {c/e: enrollments}
