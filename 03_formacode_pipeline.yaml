@@ -10,7 +10,7 @@ tasks:
     tasks:
     - id: cloneRepository_c
       type: io.kestra.plugin.git.Clone
-      url: https://github.com/jugnuarora/DataTalks-de-zoomcamp-project
+      url: https://github.com/jugnuarora/france-courses-enrollments
       branch: main
 
     - id: download_and_process
