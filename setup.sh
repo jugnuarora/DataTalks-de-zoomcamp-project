@@ -86,7 +86,7 @@ fi
 echo "✅ Billing is enabled."
 
 # Create Service Account
-SERVICE_ACCOUNT_NAME="french-courses-enrollments"
+SERVICE_ACCOUNT_NAME="france-courses-enrollments"
 SERVICE_ACCOUNT_EMAIL="$SERVICE_ACCOUNT_NAME@$GCP_PROJECT_ID.iam.gserviceaccount.com"
 KEY_FILE_PATH="secrets/gcp_credentials.json"
 
