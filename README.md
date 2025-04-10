@@ -311,7 +311,6 @@ This section outlines the automated setup using a Bash script, Terraform, and Ke
 * Use Terraform for Virtualization
 * Explore real-time data ingestion for enrollment data.
 * Optimize the Formacode translation job.
-* Install dependency of DBT Job on the Kestra workflow execution.
 
 ## Folders/Root Files Information
  
