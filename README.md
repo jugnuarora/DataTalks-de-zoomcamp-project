@@ -127,7 +127,7 @@ The [dashboard](https://lookerstudio.google.com/reporting/71ceb6ee-f472-4892-8e0
 
 2.  **Monthly Enrollment Trends:** A line graph illustrating the monthly enrollment trends for selected courses or providers, highlighting temporal patterns and growth.
 
-* A screenshot of the visualization after selecting the `formacode_field` as `IT and information systems`and `training_provider_ratio`between 5 and 15 can be found [here](/screenshots/France_Skill_Course_&_Enrollments_Analysis.pdf). 
+* A screenshot of the visualization after selecting the `formacode_field` as `IT and information systems`and `training_provider_ratio`between 5 and 15 can be found [here](/screenshots/France_Skill_Course_Enrollments_Analysis.pdf). 
 
 ## Reproducibility
 
