@@ -186,7 +186,7 @@ This section outlines the automated setup using a Bash script, Terraform, and Ke
         - Formacode (Query 26): ~3379 records
 
 4. **Visualize in Looker Studio:**
-    * You can access the visualization [here](https://lookerstudio.google.com/reporting/71ceb6ee-f472-4892-8e08-6689d9dbd42c).
+    * You can access the visualization [here](https://lookerstudio.google.com/reporting/206b1e32-afc0-4983-920f-d91d00fb5e67).
 
 ### Manual
 
@@ -297,7 +297,7 @@ This section outlines the automated setup using a Bash script, Terraform, and Ke
         - Executing the Monthly job now. The monthly job once finished will generate the [docs](/screenshots/DBT%20Documentation%20after%20Monthly%20job.png) as well.
 
 8.  **Visualize in Dashboard:**
-    * You can access the visualization [here](https://lookerstudio.google.com/reporting/71ceb6ee-f472-4892-8e08-6689d9dbd42c).
+    * You can access the visualization [here](https://lookerstudio.google.com/reporting/206b1e32-afc0-4983-920f-d91d00fb5e67).
     
 
 ## Going the Extra Mile (Optional)
