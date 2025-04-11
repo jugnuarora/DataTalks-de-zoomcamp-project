@@ -407,15 +407,15 @@ OPTIONS (
 );
 --Query 22:
 select *
-from `conciliation.formacode_translated`
---where formacode IN (31023, 31025, 31026)
+from `external.formacode_translated`
+--where formacode IN ('31023', '31025', '31026')
 limit 10;
 --Query 23:
 SELECT
     COLUMN_NAME,
     DATA_TYPE
 FROM
-    conciliation.INFORMATION_SCHEMA.COLUMNS
+    external.INFORMATION_SCHEMA.COLUMNS
 WHERE
     TABLE_NAME = "formacode_translated";
 
@@ -423,7 +423,7 @@ WHERE
 --Query 24:
 select *
 from `source_tables.formacode`
---where formacode IN (31023, 31025, 31026)
+--where formacode IN ('31023', '31025', '31026')
 limit 10;
 --Query 25:
 SELECT
@@ -515,10 +515,10 @@ from
 select count(*)
 from
 (
-select provider, department, certification_title, code_formacode_1, code_formacode_2, code_formacode_3, code_formacode_4, code_formacode_5, code_certification, provider_id, training_id, training_title  
-from `staging.courses`
+select provider, certification_title, code_formacode_1, code_formacode_2, code_formacode_3, code_formacode_4, code_formacode_5, code_certification, provider_id, training_id  
+from `dbt_models_staging.stg_courses`
 EXCEPT DISTINCT
-select provider, department, certification_title, code_formacode_1, code_formacode_2, code_formacode_3, code_formacode_4, code_formacode_5, code_certification, provider_id, training_id, training_title 
+select provider, certification_title, code_formacode_1, code_formacode_2, code_formacode_3, code_formacode_4, code_formacode_5, code_certification, provider_id, training_id 
 from `source_tables.courses`
 );
 
@@ -528,15 +528,15 @@ from `dbt_models_staging.stg_courses`
 where code_formacode_3 != code_formacode_5;
 
 select * 
-from `dbt_models.intermediate_courses`
-where formacode IN ('31023', '31025', '31026');
+from `dbt_models_prep.prep_courses`
+where formacode IN (31023, 31025, 31026);
 
 SELECT 
   code_formacode_1 as formacode, 
   count(training_id) as trianing_count,
   COUNT(DISTINCT provider_id),
-  COUNT(DISTINCT CASE WHEN provider IS NULL THEN provider_id ELSE provider END) AS provider_count,
-  COUNT(DISTINCT COALESCE(provider, provider_id)) AS provider_count_co,
+  COUNT(DISTINCT CASE WHEN provider IS NULL THEN CAST(provider_id AS STRING) ELSE provider END) AS provider_count,
+  COUNT(DISTINCT COALESCE(provider, CAST(provider_id AS STRING))) AS provider_count_co,
   count(distinct certification_title) as certification_count
 FROM
   `dbt_models_staging.stg_courses`
@@ -544,27 +544,18 @@ GROUP BY 1
 ORDER BY 2 DESC
 LIMIT 10;
 
-select count(distinct training_id) as dist_formacode
-select *
-from `source_tables.courses`
-where code_certification != '-1'
-where code_formacode_1 is not null
-group by provider, provider_id, certification_title, code_certification, code_rncp, code_rs, code_formacode_1
-having dist_formacode > 1
-limit 2;
-
 select count(*)
 from `dbt_models_staging.stg_courses`
 limit 3;
 
 select count(*)
 select count(distinct formacode)
-from `dbt_models_intermediate.intermediate_courses`
+from `dbt_models_prep.prep_courses`
 
 select *
 select count(*)
-from `dbt_models_intermediate.intermediate_enrollments`
-where formacode = '31025'
+from `dbt_models_prep.prep_courses`
+where formacode = 31025
 limit 3
 
 --------------------------------------------------------------------------------------MISC ENROLLMENTS-------------------------------------------------------------------
